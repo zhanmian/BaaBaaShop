@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="buy.baabaashop.dao.CustomerDao">
+
+    <select id="selectCustomerByUsername" resultType="buy.baabaashop.entity.Customer">
+        select id, username, password
+        from customer
+        where username = #{username}
+    </select>
+
+    <insert id="addCustomer" parameterType="buy.baabaashop.entity.Customer">
+        insert into customer(
+        <if test="username!=null">username,</if>
+        <if test="password!=null">password,</if>
+        <if test="phone!=null">phone</if>
+        )
+        values(
+        <if test="username!=null">#{username},</if>
+        <if test="password!=null">#{password},</if>
+        <if test="phone!=null">#{phone}</if>
+        )
+    </insert>
+
+    <select id="selectProductDetails" resultType="buy.baabaashop.entity.Product">
+        select id, product_code, product_price, product_name, description, picture
+        from product where
+        <if test="id!=null"> id = #{id}</if>
+    </select>
+
+    <select id="selectProductAttribute" resultType="buy.baabaashop.entity.ProductAttribute">
+        select pa.id, attribute_name, input_list, input_status
+        from product_attribute pa
+        left join product p on pa.attribute_category_id = p.product_attribute_category_id where
+        <if test="id!=null">p.id = #{id}</if>
+        and type = 0
+    </select>
+
+    <select id="selectAddAttributeValue" resultMap="productAttribute">
+        select attribute_id, value from product_attribute_value where
+        <if test="id!=null">product_id = #{id}</if>
+    </select>
+    <resultMap id="productAttribute" type="buy.baabaashop.entity.ProductAttribute">
+        <result column="attribute_id" property="id"></result>
+    </resultMap>
+
+    <select id="selectSkuByProductId" resultType="buy.baabaashop.entity.ProductSku">
+        select id, product_id, sku_code, sku_price, sku_stock, spec1, spec2, spec3
+        from sku where
+        <if test="productId!=null">product_id = #{productId}</if>
+    </select>
+
+    <select id="selectSkuByAttributes" resultType="buy.baabaashop.entity.ProductSku">
+        select sku_code, sku_price, sku_stock
+        from sku where
+        <if test="productId!=null">product_id = #{productId}</if>
+        <if test="spec1!=null">and spec1 = #{spec1}</if>
+        <if test="spec2!=null">and spec2 = #{spec2}</if>
+        <if test="spec3!=null">and spec3 = #{spec3}</if>
+    </select>
+
+</mapper>

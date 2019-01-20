@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="buy.baabaashop.dao.ProductDao">
+
+    <sql id="sqlForProduct">
+        select p.id, product_code, product_name, product_price, sold, p.create_time, c.category_name
+        from product p
+        left join category c on p.product_category_id = c.id
+    </sql>
+
+    <select id="selectProductList" resultType="buy.baabaashop.entity.Product">
+        <include refid="sqlForProduct"></include> limit #{from}, #{pageSize}
+    </select>
+
+    <select id="selectProductTotalRecord" resultType="Integer">
+        select count(*) from (<include refid="sqlForProduct"></include>) s
+    </select>
+
+    <select id="selectSkuDetails" resultType="buy.baabaashop.entity.ProductSku">
+        select id, sku_code, sku_price, sku_stock, spec1, spec2, spec3
+        from sku
+        where product_id = #{productId}
+    </select>
+
+    <select id="selectProductCode" resultMap="productCode">
+        select product_code, product_attribute_category_id
+        from product
+        where id = #{productId}
+    </select>
+    <resultMap id="productCode" type="buy.baabaashop.entity.Product">
+        <result property="categoryId" column="product_attribute_category_id"></result>
+    </resultMap>
+
+    <select id="selectProductCategoryList" resultMap="productCategory">
+        select id, category_name, create_time from category where p_id=#{categoryId} limit #{from}, #{pageSize}
+    </select>
+    <select id="selectAllParentProductCategory" resultMap="productCategory">
+        select id, category_name from category where p_id=0
+    </select>
+    <resultMap id="productCategory" type="buy.baabaashop.entity.Product">
+        <result property="categoryId" column="id"></result>
+    </resultMap>
+
+    <select id="selectProductCategoryTotalRecord" resultType="Integer">
+        select count(*) from category where p_id=0
+    </select>
+
+    <select id="selectProductAttributeCategory" resultType="buy.baabaashop.entity.Product">
+        select * from product_attribute_category limit #{from}, #{pageSize}
+    </select>
+
+    <select id="selectProductAttributeCategoryTotalRecord" resultType="Integer">
+        select count(*) from product_attribute_category
+    </select>
+
+    <select id="selectAllProductAttributeCategory" resultType="buy.baabaashop.entity.ProductAttribute">
+        select * from product_attribute_category
+    </select>
+
+    <select id="selectProductAttributeCategoryAttributeCount" resultType="Integer">
+        select attribute_count from product_attribute_category where id = #{categoryId}
+    </select>
+
+    <select id="selectProductAttributeCategoryParamCount" resultType="Integer">
+        select param_count from product_attribute_category where id = #{categoryId}
+    </select>
+
+    <sql id="productAttribute">
+        select pa.id, attribute_name, pac.category_name, input_status, input_list, select_type
+        from product_attribute pa
+        left join product_attribute_category pac on pa.attribute_category_id = pac.id
+        where type=#{type} and pa.attribute_category_id=#{categoryId}
+    </sql>
+
+    <select id="selectProductAttribute" resultType="buy.baabaashop.entity.ProductAttribute">
+        <include refid="productAttribute"></include> limit #{from}, #{pageSize}
+    </select>
+
+    <select id="selectProductAttributeByCategoryId" resultType="buy.baabaashop.entity.ProductAttribute">
+        <include refid="productAttribute"></include>
+    </select>
+
+    <select id="selectProductAttributeTotalRecord" resultType="Integer">
+        select count(*) from (<include refid="productAttribute"></include> ) s
+    </select>
+
+    <select id="selectProductAttributeById" resultMap="productAttribute">
+        select * from product_attribute where
+        <if test="id!=null">
+            id = #{id}
+        </if>
+    </select>
+    <resultMap id="productAttribute" type="buy.baabaashop.entity.ProductAttribute">
+        <result property="categoryId" column="attribute_category_id"></result>
+    </resultMap>
+
+    <insert id="addProduct" parameterType="buy.baabaashop.entity.Product">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        insert into product (
+        <if test="productName!=null">product_name,</if>
+        <if test="productCode!=null">product_code,</if>
+        <if test="productPrice!=null">product_price,</if>
+        <if test="categoryId!=null">product_category_id,</if>
+        <if test="attributeCategoryId!=null">product_attribute_category_id,</if>
+        <if test="picture!=null">picture,</if>
+        <if test="description!=null">description</if>
+        )
+        values(
+        <if test="productName!=null">#{productName},</if>
+        <if test="productCode!=null">#{productCode},</if>
+        <if test="productPrice!=null">#{productPrice},</if>
+        <if test="categoryId!=null">#{categoryId},</if>
+        <if test="attributeCategoryId!=null">#{attributeCategoryId},</if>
+        <if test="picture!=null">#{picture},</if>
+        <if test="description!=null">#{description}</if>
+        )
+    </insert>
+
+    <insert id="addProductSku" parameterType="buy.baabaashop.entity.ProductSku">
+        insert into sku (
+        <if test="productId!=null">product_id,</if>
+        <if test="skuCode!=null">sku_code,</if>
+        <if test="skuPrice!=null">sku_price,</if>
+        <if test="skuStock!=null">sku_stock,</if>
+        <if test="spec1!=null">spec1,</if>
+        <if test="spec2!=null">spec2,</if>
+        spec3
+        )
+        values(
+        <if test="productId!=null">#{productId},</if>
+        <if test="skuCode!=null">#{skuCode},</if>
+        <if test="skuPrice!=null">#{skuPrice},</if>
+        <if test="skuStock!=null">#{skuStock},</if>
+        <if test="spec1!=null">#{spec1},</if>
+        <if test="spec2!=null">#{spec2},</if>
+        #{spec3}
+        )
+    </insert>
+
+    <insert id="addAttributeValue" parameterType="buy.baabaashop.entity.ProductAttribute">
+        insert into product_attribute_value (
+        <if test="productId!=null"> product_id, </if>
+        <if test="id!=null">attribute_id, </if>
+        <if test="attributeName!=null">value </if>
+        )
+        values(
+        <if test="productId!=null"> #{productId}, </if>
+        <if test="id!=null">#{id}, </if>
+        <if test="attributeName!=null">#{attributeName} </if>
+        )
+    </insert>
+
+    <insert id="addProductCategory" parameterType="buy.baabaashop.entity.Product">
+        insert into category (
+        <if test="pId!=null">p_id, </if>
+        <if test="categoryName!=null">category_name, </if>
+        <if test="level!=null">level, </if>
+        create_time
+        )
+        values(
+        <if test="pId!=null">#{pId}, </if>
+        <if test="categoryName!=null">#{categoryName}, </if>
+        <if test="level!=null">#{level}, </if>
+        now()
+        )
+    </insert>
+
+    <insert id="addProductAttributeCategory" parameterType="buy.baabaashop.entity.ProductAttribute">
+        insert into product_attribute_category(
+        <if test="categoryName!=null">category_name</if>
+        )
+        values(
+        <if test="categoryName!=null">#{categoryName}</if>
+        )
+    </insert>
+
+    <insert id="addProductAttribute" parameterType="buy.baabaashop.entity.ProductAttribute">
+        insert into product_attribute(
+        <if test="attributeName!=null">attribute_name,</if>
+        <if test="categoryId!=null">attribute_category_id,</if>
+        <if test="inputStatus!=null">input_status,</if>
+        <if test="selectType!=null">select_type,</if>
+        <if test="inputList!=null">input_list,</if>
+        <if test="type!=null">type</if>
+        )
+        values(
+        <if test="attributeName!=null">#{attributeName},</if>
+        <if test="categoryId!=null">#{categoryId},</if>
+        <if test="inputStatus!=null">#{inputStatus},</if>
+        <if test="selectType!=null">#{selectType},</if>
+        <if test="inputList!=null">#{inputList},</if>
+        <if test="type!=null">#{type}</if>
+        )
+    </insert>
+
+    <update id="updateProductAttributeCategoryAttributeCount"
+            parameterType="buy.baabaashop.entity.ProductAttribute">
+        update product_attribute_category set
+        <if test="attributeCount!=null">
+            attribute_count = #{attributeCount}
+        </if>
+        where id = #{categoryId}
+    </update>
+
+    <update id="updateProductAttributeCategoryParamCount"
+            parameterType="buy.baabaashop.entity.ProductAttribute">
+        update product_attribute_category set
+        <if test="paramCount!=null">
+            param_count = #{paramCount}
+        </if>
+        where id = #{categoryId}
+    </update>
+
+    <update id="updateProductAttribute"
+            parameterType="buy.baabaashop.entity.ProductAttribute">
+        update product_attribute set
+        <if test="attributeName!=null">
+            attribute_name = #{attributeName},
+        </if>
+        <if test="categoryId!=null">
+            attribute_category_id = #{categoryId},
+        </if>
+        <if test="inputStatus!=null">
+            input_status = #{inputStatus},
+        </if>
+        <if test="inputList!=null">
+            input_list = #{inputList},
+        </if>
+        <if test="selectType!=null">
+            select_type = #{selectType}
+        </if>
+        where id = #{id}
+    </update>
+
+</mapper>
