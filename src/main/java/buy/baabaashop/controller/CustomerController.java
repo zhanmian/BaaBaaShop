@@ -4,7 +4,6 @@ import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
 import buy.baabaashop.service.CustomerServiceImp;
-import buy.baabaashop.utils.JacksonUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

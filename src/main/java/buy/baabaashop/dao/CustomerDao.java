@@ -1,9 +1,6 @@
 package buy.baabaashop.dao;
 
-import buy.baabaashop.entity.Customer;
-import buy.baabaashop.entity.Product;
-import buy.baabaashop.entity.ProductAttribute;
-import buy.baabaashop.entity.ProductSku;
+import buy.baabaashop.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,4 +16,9 @@ public interface CustomerDao {
     List<ProductAttribute> selectProductAttribute(Product product);
     List<ProductAttribute> selectAddAttributeValue(Product product);
     ProductSku selectSkuByAttributes(ProductSku productSku);
+    Integer selectCustomerIdByUsername(@Param("username") String username);
+    void addCart(CartItem cartItem);
+    List<CartItem> selectCartByCustomerId(@Param("customerId") Integer customerId);
+    void updateCartQuantity(CartItem cartItem);
+    CartItem checkCartItemBySkuId(CartItem cartItem);
 }

@@ -1,6 +1,7 @@
 package buy.baabaashop.entity;
 
 public class ProductSku {
+    private Integer id;
     private Integer productId;
     private String skuCode;
     private Integer skuPrice;
@@ -8,6 +9,14 @@ public class ProductSku {
     private String spec1;
     private String spec2;
     private String spec3;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getProductId() {
         return productId;

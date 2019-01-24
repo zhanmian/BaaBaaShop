@@ -53,12 +53,50 @@
     </select>
 
     <select id="selectSkuByAttributes" resultType="buy.baabaashop.entity.ProductSku">
-        select sku_code, sku_price, sku_stock
+        select id, sku_code, sku_price, sku_stock
         from sku where
         <if test="productId!=null">product_id = #{productId}</if>
         <if test="spec1!=null">and spec1 = #{spec1}</if>
         <if test="spec2!=null">and spec2 = #{spec2}</if>
         <if test="spec3!=null">and spec3 = #{spec3}</if>
     </select>
+
+    <select id="selectCustomerIdByUsername" resultType="Integer">
+        select id from customer where
+        <if test="username!=null">username = #{username}</if>
+    </select>
+
+    <select id="selectCartByCustomerId" resultType="buy.baabaashop.entity.CartItem">
+        select id, customer_id, product_id, sku_id, quantity from cart where
+        <if test="customerId!=null">customer_id = #{customerId}</if>
+    </select>
+
+    <select id="checkCartItemBySkuId" resultType="buy.baabaashop.entity.CartItem">
+        select id, customer_id, product_id, sku_id, quantity from cart where
+        <if test="customerId!=null">customer_id = #{customerId}</if>
+        <if test="skuId!=null">and sku_id = #{skuId}</if>
+    </select>
+
+    <insert id="addCart" parameterType="buy.baabaashop.entity.CartItem">
+        insert into cart (
+        <if test="customerId!=null">customer_id,</if>
+        <if test="productId!=null">product_id,</if>
+        <if test="skuId!=null">sku_id,</if>
+        <if test="quantity!=null">quantity</if>
+        )
+        values(
+        <if test="customerId!=null">#{customerId},</if>
+        <if test="productId!=null">#{productId},</if>
+        <if test="skuId!=null">#{skuId},</if>
+        <if test="quantity!=null">#{quantity}</if>
+        )
+    </insert>
+
+    <update id="updateCartQuantity" parameterType="buy.baabaashop.entity.CartItem">
+        update cart set
+        <if test="quantity!=null">quantity=#{quantity}</if>
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
 
 </mapper>

@@ -187,7 +187,7 @@
 
 <input type="hidden" id="product-id" value=${productId!}>
 <input type="hidden" id="attribute-list" value=${attributeList!}>
-<input type="hidden" id="product-sku-code">
+<input type="hidden" id="product-sku-id">
 
 <script src="/js/jquery.min.js"></script>
 <script src="/online_shop/styles/bootstrap4/popper.js"></script>

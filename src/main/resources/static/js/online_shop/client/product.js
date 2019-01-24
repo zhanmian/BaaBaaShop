@@ -290,7 +290,7 @@ $(document).ready(function()
 function addCart(){
     var param = {};
     param.productId = $('#product-id').val();
-    param.skuCode = $('#product-sku-code').val();
+    param.skuId = $('#product-sku-id').val();
     param.quantity = $('#quantity_input').val();
 
     $.ajax({
@@ -298,7 +298,7 @@ function addCart(){
         data : param,
         url : baseUrl + '/baabaa/add_cart',
         success : function(response){
-            console.log(response.message);
+            alert(response.message);
         }
     })
 }
@@ -324,8 +324,14 @@ function skuDetails(){
     var productId = $('#product-id').val();
 
     //两个规格属性中只要有一个是空的就返回
-    if(!spec1 || !spec2){
-        return;
+    if(!spec3){
+        if(!spec1 || !spec2){
+            return;
+        }
+    }else{
+        if(!spec1 || !spec2 || !spec3){
+            return;
+        }
     }
 
     var param = {};
@@ -352,7 +358,7 @@ function skuDetails(){
                 $('#availability').html("现在有货");
             }
             $('.details_price').html('￥'+ response.skuPrice);
-            $('#product-sku-code').val(response.skuCode);
+            $('#product-sku-id').val(response.id);
         }
     })
 

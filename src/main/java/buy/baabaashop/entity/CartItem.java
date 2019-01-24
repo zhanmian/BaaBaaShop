@@ -2,22 +2,31 @@ package buy.baabaashop.entity;
 
 
 public class CartItem {
-    private long id;
+    private Integer id;
+    private Integer CustomerId;
     private long productId;
     private String productName;
     private Integer productPrice;
     private String productPicture;
-    private long skuId;
-    private long skuCode;
+    private Integer skuId;
+    private String skuCode;
     private Integer quantity;
     private String createTime;
 
-    public long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getCustomerId() {
+        return CustomerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        CustomerId = customerId;
     }
 
     public long getProductId() {
@@ -52,19 +61,19 @@ public class CartItem {
         this.productPicture = productPicture;
     }
 
-    public long getSkuId() {
+    public Integer getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(long skuId) {
+    public void setSkuId(Integer skuId) {
         this.skuId = skuId;
     }
 
-    public long getSkuCode() {
+    public String getSkuCode() {
         return skuCode;
     }
 
-    public void setSkuCode(long skuCode) {
+    public void setSkuCode(String skuCode) {
         this.skuCode = skuCode;
     }
 
@@ -82,5 +91,26 @@ public class CartItem {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+//    @Override
+//    public int hashCode() {
+//        final int prime = 31;
+//        int result = 1;
+//        result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+//        return result;
+//    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) //比较地址
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CartItem other = (CartItem) obj;
+        if (!getSkuId().equals(other.getSkuId()))
+            return false;
+        return true;
     }
 }

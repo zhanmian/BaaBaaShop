@@ -3,10 +3,8 @@ package buy.baabaashop.service;
 import buy.baabaashop.common.CommonException;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.CustomerDao;
-import buy.baabaashop.entity.CartItem;
-import buy.baabaashop.entity.Customer;
-import buy.baabaashop.entity.Product;
-import buy.baabaashop.entity.ProductAttribute;
+import buy.baabaashop.entity.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -108,19 +107,74 @@ public class CustomerServiceImp implements CustomerService {
         ResultData resultData = new ResultData();
         try{
             ObjectMapper objectMapper = new ObjectMapper();
-            //把对象转换为JSON字符串方便cookie存储
-            String cartItemStr = objectMapper.writeValueAsString(cartItem);
-            //存储cookie时如果没有对JSON字符串进行编码会出现严重错误：非法字符[34]
-            Cookie cartCookie = new Cookie("cart", URLEncoder.encode(cartItemStr, "utf-8"));
-            //存活时间设为-0实现永久存储
-            cartCookie.setMaxAge(-0);
-            cartCookie.setPath("/");
-            response.addCookie(cartCookie);
-            resultData.setMessage("购物车添加成功");
+            //如果对象中有Null值的就忽略，不转为Json
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
+            Cart cart = null;
+            Cookie[] cookies = request.getCookies();
+
+            if(cookies != null && cookies.length > 0){
+                for(Cookie cookie : cookies){
+                    //解码
+                    String name = URLDecoder.decode(cookie.getName(), "utf8");
+                    String value = URLDecoder.decode(cookie.getValue(), "utf8");
+                    //如果cookie的名称为cart就将Json转换为对象并赋给cart
+                    if(name.equals("cart")){
+                        cart = objectMapper.readValue(value, Cart.class);
+                        break;
+                    }
+                }
+            }
+            //如果cart对象为null则新建一个对象
+            if(cart == null){
+                cart = new Cart();
+            }
+            //将当前商品添加进购物车商品列表
+            if(cartItem.getSkuId() != null && cartItem.getQuantity() != null){
+                cart.addItem(cartItem);
+            }
+
+            //如果用户没有登录的话就存入cookie
+            HttpSession session = request.getSession();
+            String username = (String)session.getAttribute("username");
+            if(username == null || username.equals("")){
+                //把对象转换为JSON字符串方便cookie存储
+                String cartStr = objectMapper.writeValueAsString(cart);
+                System.out.println(cartStr);
+                //存储cookie时如果没有对JSON字符串进行编码会出现严重错误：非法字符[34]
+                Cookie cartCookie = new Cookie("cart", URLEncoder.encode(cartStr, "utf8"));
+                cartCookie.setMaxAge(24*60*60*30);
+                cartCookie.setPath("/");
+                response.addCookie(cartCookie);
+                resultData.setMessage("购物车添加成功");
+            //如果用户登录了，那么将cookie中的购物车写入数据库
+            }else{
+                Integer customerId = customerDao.selectCustomerIdByUsername(username);
+                //查找数据库中是否有同款商品，有就更新数量，没有就新增
+                for(CartItem item : cart.getItems()){
+                    item.setCustomerId(customerId);
+                    CartItem dbCartItem = customerDao.checkCartItemBySkuId(item);
+                    if(dbCartItem != null){
+                        item.setId(dbCartItem.getId());
+                        item.setQuantity(item.getQuantity() + dbCartItem.getQuantity());
+                        customerDao.updateCartQuantity(item);
+                    }else{
+                        customerDao.addCart(item);
+                    }
+                }
+                //把购物车cookie删除
+                Cookie cookie = new Cookie("cart", null);
+                cookie.setPath("/");
+                cookie.setMaxAge(-0);
+                response.addCookie(cookie);
+                resultData.setMessage("购物车添加成功");
+            }
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
         }catch(Exception e){
             e.printStackTrace();
-            resultData.setMessage("购物车添加失败");
+            throw new CommonException();
         }
         return resultData;
     }
