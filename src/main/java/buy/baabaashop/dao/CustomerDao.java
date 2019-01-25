@@ -18,7 +18,8 @@ public interface CustomerDao {
     ProductSku selectSkuByAttributes(ProductSku productSku);
     Integer selectCustomerIdByUsername(@Param("username") String username);
     void addCart(CartItem cartItem);
-    List<CartItem> selectCartByCustomerId(@Param("customerId") Integer customerId);
     void updateCartQuantity(CartItem cartItem);
     CartItem checkCartItemBySkuId(CartItem cartItem);
+    CartItem selectItemBySkuId(CartItem cartItem);
+    List<CartItem> selectCartByCustomerId(CartItem cartItem);
 }

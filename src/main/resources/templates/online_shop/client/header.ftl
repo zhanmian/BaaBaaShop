@@ -60,7 +60,9 @@
 													c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h45.2l26.9,302.3C412.8,445.2,392.1,462,366.8,462z"/>
 											</g>
 										</svg>
-                                    <div>购物车 <span id="cartCount">(0)</span></div>
+                                    <div>购物车
+                                        <#--<span id="cartCount">(0)</span>-->
+                                    </div>
                                 </a>
                             </div>
                             <div class="search">

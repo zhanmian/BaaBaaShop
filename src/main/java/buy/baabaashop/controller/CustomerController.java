@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -92,8 +93,8 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "/cart")
-    public String toCart(){
-        return "online_shop/client/cart";
+    public String toCart(HttpServletRequest request, Model model)throws IOException{
+        return customerServiceImp.toCart(request, model);
     }
 
     @RequestMapping(value = "checkout")

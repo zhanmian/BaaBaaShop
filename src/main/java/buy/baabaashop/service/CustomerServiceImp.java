@@ -10,16 +10,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,7 +65,7 @@ public class CustomerServiceImp implements CustomerService {
             session.setAttribute("password", password);
 
             Cookie usernameCookie = new Cookie("username", customer.getUsername());
-            usernameCookie.setMaxAge(7200);
+            usernameCookie.setMaxAge(24*60*60*30);
             usernameCookie.setPath("/");
             response.addCookie(usernameCookie);
 
@@ -101,6 +104,7 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    @Transactional
     public ResultData addCartItem(HttpServletRequest request,
                             HttpServletResponse response,
                             CartItem cartItem) {
@@ -133,7 +137,6 @@ public class CustomerServiceImp implements CustomerService {
             if(cartItem.getSkuId() != null && cartItem.getQuantity() != null){
                 cart.addItem(cartItem);
             }
-
             //如果用户没有登录的话就存入cookie
             HttpSession session = request.getSession();
             String username = (String)session.getAttribute("username");
@@ -177,6 +180,54 @@ public class CustomerServiceImp implements CustomerService {
             throw new CommonException();
         }
         return resultData;
+    }
+
+    @Override
+    public String toCart(HttpServletRequest request, Model model) throws IOException {
+        HttpSession session = request.getSession();
+        String username = (String)session.getAttribute("username");
+
+        if(username == null || username.equals("")){
+            ObjectMapper objectMapper = new ObjectMapper();
+            //如果对象中有Null值的就忽略，不转为Json
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+            Cart cart = null;
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null && cookies.length > 0){
+                for(Cookie cookie : cookies){
+                    //如果cookie的名称为cart就将Json转换为对象并赋给cart
+                    if(URLDecoder.decode(cookie.getName(), "utf8").equals("cart")){
+                        cart = objectMapper.readValue(URLDecoder.decode(cookie.getValue(), "utf8"), Cart.class);
+                        break;
+                    }
+                }
+            }
+            if(cart != null){
+                for(CartItem item : cart.getItems()){
+                    CartItem cartItem = customerDao.selectItemBySkuId(item);
+                    item.setProductName(cartItem.getProductName());
+                    item.setProductPicture(cartItem.getProductPicture());
+                    item.setSkuCode(cartItem.getSkuCode());
+                    item.setSkuPrice(cartItem.getSkuPrice());
+                    item.setSpec1(cartItem.getSpec1());
+                    item.setSpec2(cartItem.getSpec2());
+                    item.setSpec3(cartItem.getSpec3());
+                }
+            }
+            model.addAttribute("cart", cart);
+            model.addAttribute("totalPrice", cart.getTotalPrice());
+
+        }else{
+            Integer customerId = customerDao.selectCustomerIdByUsername(username);
+            Cart cart = new Cart();
+            CartItem cartItem = new CartItem();
+            cartItem.setCustomerId(customerId);
+            List<CartItem> cartItems = customerDao.selectCartByCustomerId(cartItem);
+            cart.setItems(cartItems);
+            model.addAttribute("cart", cart);
+        }
+        return "online_shop/client/cart";
     }
 
     public static String md5Password(String password) {
