@@ -67,7 +67,7 @@
     </select>
 
     <select id="selectCartByCustomerId" resultMap="item">
-        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity
+        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity, c.id, c.sku_id
         from product p, sku s, cart c
         where p.id=s.product_id and s.id=c.sku_id
         <if test="customerId!=null">and customer_id = #{customerId}</if>

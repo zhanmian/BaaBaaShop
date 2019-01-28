@@ -179,35 +179,79 @@ $(document).ready(function()
 
 	*/
 
-	function initQuantity()
-	{
-		// Handle product quantity input
-		if($('.product_quantity').length)
-		{
-			var input = $('#quantity_input');
-			var incButton = $('#quantity_inc_button');
-			var decButton = $('#quantity_dec_button');
+	function initQuantity() {
 
-			var originalVal;
-			var endVal;
+		if($('.product_quantity').length) {
+			var incButton = $('.quantity_inc');
+			var decButton = $('.quantity_dec');
 
-			incButton.on('click', function()
-			{
-				originalVal = input.val();
-				endVal = parseFloat(originalVal) + 1;
-				input.val(endVal);
-			});
+            incButton.on('click', function () {
+                var dom = $(this).parent().parent().find('input[class*=quantity_input]');
+                var cartItemId = $('#cart-item-id').val();
+                var skuId = $(this).parent().find('input[id=sku-id]').val();
+                var quantity = parseInt(dom.val()) + 1;
 
-			decButton.on('click', function()
-			{
-				originalVal = input.val();
-				if(originalVal > 0)
-				{
-					endVal = parseFloat(originalVal) - 1;
-					input.val(endVal);
-				}
-			});
-		}
-	}
+                var param = {};
+                param.cartItemId = cartItemId;
+                param.skuId = skuId;
+                param.quantity = quantity;
 
+                $.ajax({
+                    type: 'post',
+                    data: param,
+                    url: baseUrl + '/baabaa/update_quantity',
+                    success: function (response) {
+                        //如果数量大于库存数量则不允许增加并弹框提示
+                        if (response.code === 1) {
+                            alert(response.message);
+                            //如果没有超过就更新数量和总价
+                        } else {
+                            dom.val(quantity);
+                            var price = $('#' + skuId).find('span[class*=price]').text();
+                            $('#' + skuId).find('span[class*=item-total]').html(price * quantity);
+                        }
+                    }
+                });
+                setTotal();
+            });
+
+            decButton.on('click', function () {
+                var cartItemId = $('#cart-item-id').val();
+                var dom = $(this).parent().parent().find('input[class*=quantity_input]');
+                var quantity = parseInt(dom.val()) - 1;
+                dom.val(quantity);
+                if (quantity <= 0) {
+                    quantity = 0;
+                    dom.val(quantity);
+                }
+                var skuId = $(this).parent().find('input[id=sku-id]').val();
+                var price = $('#' + skuId).find('span[class*=price]').text();
+                $('#' + skuId).find('span[class*=item-total]').html(price * quantity);
+
+                setTotal();
+
+                var param = {};
+                param.cartItemId = cartItemId;
+                param.skuId = skuId;
+                param.quantity = quantity;
+
+                $.ajax({
+                    type: 'post',
+                    data: param,
+                    url: baseUrl + '/baabaa/update_quantity',
+                    success: function (response) {
+
+                    }
+                });
+            });
+        }
+    }
 });
+
+function setTotal() {
+    var sum = 0;
+    $("#cart-items .item-total").each(function () {
+        sum += parseInt($(this).text());
+    });
+    $("#total-price").html(sum);
+}

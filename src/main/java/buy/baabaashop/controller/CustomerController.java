@@ -97,6 +97,20 @@ public class CustomerController {
         return customerServiceImp.toCart(request, model);
     }
 
+    @RequestMapping(value = "/check_stock")
+    @ResponseBody
+    public Integer checkStock(HttpServletRequest request, CartItem cartItem){
+        return customerDao.selectItemBySkuId(cartItem).getSkuStock();
+    }
+
+    @RequestMapping(value = "update_quantity")
+    @ResponseBody
+    public ResultData updateQuantity(HttpServletRequest request,
+                                     HttpServletResponse response,
+                                     CartItem cartItem) throws IOException{
+        return customerServiceImp.updateQuantity(request, response, cartItem);
+    }
+
     @RequestMapping(value = "checkout")
     public String toCheckout(){
         return "online_shop/client/checkout";

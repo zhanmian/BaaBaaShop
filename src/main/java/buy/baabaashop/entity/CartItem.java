@@ -9,13 +9,14 @@ public class CartItem {
     private String productPicture;
     private Integer skuId;
     private String skuCode;
-    private Integer skuPrice;
+    private float skuPrice;
     private Integer skuStock;
     private String spec1;
     private String spec2;
     private String spec3;
     private Integer quantity;
     private String createTime;
+    private float itemTotalPrice;
 
     public Integer getId() {
         return id;
@@ -73,11 +74,11 @@ public class CartItem {
         this.skuCode = skuCode;
     }
 
-    public Integer getSkuPrice() {
+    public float getSkuPrice() {
         return skuPrice;
     }
 
-    public void setSkuPrice(Integer skuPrice) {
+    public void setSkuPrice(float skuPrice) {
         this.skuPrice = skuPrice;
     }
 
@@ -128,7 +129,16 @@ public class CartItem {
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
-//    @Override
+
+    public float getItemTotalPrice() {
+        return itemTotalPrice;
+    }
+
+    public void setItemTotalPrice(float itemTotalPrice) {
+        this.itemTotalPrice = itemTotalPrice;
+    }
+
+    //    @Override
 //    public int hashCode() {
 //        final int prime = 31;
 //        int result = 1;

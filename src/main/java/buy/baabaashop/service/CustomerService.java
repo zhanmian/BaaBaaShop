@@ -17,4 +17,5 @@ public interface CustomerService {
     ResultData addCartItem(HttpServletRequest request, HttpServletResponse response, CartItem cartItem);
     String selectProductAttribute(Product product);
     String toCart(HttpServletRequest request, Model model) throws IOException;
+    ResultData updateQuantity(HttpServletRequest request, HttpServletResponse response, CartItem cartItem) throws IOException;
 }

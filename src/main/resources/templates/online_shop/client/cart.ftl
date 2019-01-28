@@ -60,11 +60,12 @@
                 </div>
             </div>
             <div class="row cart_items_row">
-                <div class="col">
+                <div class="col" id="cart-items">
 
                     <#list cart.items as item>
                         <!-- CartItem Item -->
-                        <div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
+                        <div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start"
+                                id="${item.skuId!}">
                             <!-- Name -->
                             <div class="cart_item_product d-flex flex-row align-items-center justify-content-start">
                                 <div class="cart_item_image">
@@ -78,14 +79,16 @@
                                 </div>
                             </div>
                             <!-- Price -->
-                            <div class="cart_item_price">￥${item.skuPrice!}</div>
+                            <div class="cart_item_price">￥<span class="price">${item.skuPrice!}</span></div>
                             <!-- Quantity -->
                             <div class="cart_item_quantity">
                                 <div class="product_quantity_container">
                                     <div class="product_quantity clearfix">
                                         <span>数量</span>
-                                        <input id="quantity_input" type="text" pattern="[0-9]*" value="${item.quantity!}">
+                                        <input id="quantity_input" type="text" class="quantity_input" pattern="[0-9]*" value="${item.quantity!}">
                                         <div class="quantity_buttons">
+                                            <#--隐藏域-->
+                                            <input type="hidden" id="sku-id" value="${item.skuId!}">
                                             <div id="quantity_inc_button" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>
                                             <div id="quantity_dec_button" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>
                                         </div>
@@ -93,7 +96,7 @@
                                 </div>
                             </div>
                             <!-- Total -->
-                            <div class="cart_item_total">$790.90</div>
+                            <div class="cart_item_total">￥<span class="item-total">${item.quantity! * item.skuPrice!}</span></div>
                         </div>
                     </#list>
 
@@ -157,7 +160,7 @@
                             <ul>
                                 <li class="d-flex flex-row align-items-center justify-content-start">
                                     <div class="cart_total_title">商品小计</div>
-                                    <div class="cart_total_value ml-auto">￥${totalPrice!}</div>
+                                    <div class="cart_total_value ml-auto">￥<span id="total-price">${totalPrice!}</span></div>
                                 </li>
                                 <li class="d-flex flex-row align-items-center justify-content-start">
                                     <div class="cart_total_title">运费</div>
@@ -190,5 +193,8 @@
 <script src="/online_shop/plugins/easing/easing.js"></script>
 <script src="/online_shop/plugins/parallax-js-master/parallax.min.js"></script>
 <script src="/js/online_shop/client/cart.js"></script>
+<script>
+    var baseUrl = "${baseUrl!}";
+</script>
 </body>
 </html>
