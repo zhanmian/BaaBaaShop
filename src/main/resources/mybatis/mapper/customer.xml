@@ -66,21 +66,25 @@
         <if test="username!=null">username = #{username}</if>
     </select>
 
-    <select id="selectCartByCustomerId" resultMap="item">
-        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity, c.id, c.sku_id
+    <select id="selectCartByCustomerId" resultMap="cart">
+        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity, c.id, c.product_id, c.sku_id
         from product p, sku s, cart c
         where p.id=s.product_id and s.id=c.sku_id
         <if test="customerId!=null">and customer_id = #{customerId}</if>
     </select>
+    <resultMap id="cart" type="buy.baabaashop.entity.CartItem">
+        <result property="productPicture" column="picture"></result>
+    </resultMap>
 
     <select id="selectItemBySkuId" resultMap="item">
-        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3
+        select product_name, p.picture, s.id, sku_code, sku_price, sku_stock, spec1, spec2, spec3
         from product p, sku s
         where p.id=s.product_id
         <if test="skuId!=null">and s.id = #{skuId}</if>
     </select>
     <resultMap id="item" type="buy.baabaashop.entity.CartItem">
         <result property="productPicture" column="picture"></result>
+        <result property="skuId" column="id"></result>
     </resultMap>
 
     <select id="checkCartItemBySkuId" resultType="buy.baabaashop.entity.CartItem">
@@ -110,5 +114,56 @@
         where
         <if test="id!=null">id=#{id}</if>
     </update>
+
+    <update id="updateSkuStock" parameterType="buy.baabaashop.entity.CartItem">
+        update sku set
+        <if test="skuStock!=null">sku_stock=#{skuStock}</if>
+        where
+        <if test="skuId!=null">id=#{skuId}</if>
+    </update>
+
+    <insert id="generateOrder" parameterType="buy.baabaashop.entity.Order">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        insert into order_details (
+        <if test="orderCode!=null">order_code,</if>
+        <if test="customerId!=null">customer_id,</if>
+        <if test="totalAmount!=null">total_amount,</if>
+        <if test="payType!=null">pay_type,</if>
+        <if test="status!=null">status,</if>
+        <if test="confirmStatus!=null">confirm_status</if>
+        )
+        values(
+        <if test="orderCode!=null">#{orderCode},</if>
+        <if test="customerId!=null">#{customerId},</if>
+        <if test="totalAmount!=null">#{totalAmount},</if>
+        <if test="payType!=null">#{payType},</if>
+        <if test="status!=null">#{status},</if>
+        <if test="confirmStatus!=null">#{confirmStatus}</if>
+        )
+    </insert>
+
+    <insert id="insertOrderItem" parameterType="buy.baabaashop.entity.OrderItem">
+        insert into order_item (
+        <if test="orderId!=null">order_id,</if>
+        <if test="orderCode!=null">order_code,</if>
+        <if test="productId!=null">product_id,</if>
+        <if test="skuId!=null">sku_id,</if>
+        <if test="quantity!=null">quantity</if>
+        )
+        values(
+        <if test="orderId!=null">#{orderId},</if>
+        <if test="orderCode!=null">#{orderCode},</if>
+        <if test="productId!=null">#{productId},</if>
+        <if test="skuId!=null">#{skuId},</if>
+        <if test="quantity!=null">#{quantity}</if>
+        )
+    </insert>
+
+    <delete id="deleteCartByCustomerId" parameterType="Integer">
+        delete from cart where
+        <if test="customerId!=null">customer_id=#{customerId}</if>
+    </delete>
 
 </mapper>

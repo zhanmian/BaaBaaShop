@@ -6,6 +6,7 @@ public class ProductSku {
     private String skuCode;
     private Integer skuPrice;
     private Integer skuStock;
+    //商品规格属性
     private String spec1;
     private String spec2;
     private String spec3;

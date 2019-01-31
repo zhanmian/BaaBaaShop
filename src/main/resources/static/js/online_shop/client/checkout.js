@@ -41,8 +41,6 @@ $(document).ready(function()
 
 	initSearch();
 	initMenu();
-	initQuantity();
-
 	/* 
 
 	2. Set Header
@@ -173,41 +171,22 @@ $(document).ready(function()
 		menuActive = false;
 	}
 
-	/* 
-
-	5. Init Quantity
-
-	*/
-
-	function initQuantity()
-	{
-		// Handle product quantity input
-		if($('.product_quantity').length)
-		{
-			var input = $('#quantity_input');
-			var incButton = $('#quantity_inc_button');
-			var decButton = $('#quantity_dec_button');
-
-			var originalVal;
-			var endVal;
-
-			incButton.on('click', function()
-			{
-				originalVal = input.val();
-				endVal = parseFloat(originalVal) + 1;
-				input.val(endVal);
-			});
-
-			decButton.on('click', function()
-			{
-				originalVal = input.val();
-				if(originalVal > 0)
-				{
-					endVal = parseFloat(originalVal) - 1;
-					input.val(endVal);
-				}
-			});
-		}
-	}
-
 });
+
+function generateOrder(){
+	var payType = $("input[type='radio'][name='pay-type']:checked").val();
+	var totalAmount = $('#total-amount').text();
+
+	var param = {};
+	param.payType = payType;
+	param.totalAmount = totalAmount;
+
+	$.ajax({
+		type : 'post',
+		data : param,
+		url : baseUrl + '/baabaa/generate_order',
+		success : function(response){
+			alert(response.message);
+		}
+	})
+}

@@ -6,7 +6,6 @@ public class ProductAttribute {
     private Integer attributeCount;
     private Integer paramCount;
     private String createTime;
-
     private Integer categoryId;
     private Integer productId;
     private String attributeName;
@@ -16,9 +15,9 @@ public class ProductAttribute {
     private Integer selectType;
     //属性类型，0规格，1参数
     private Integer type;
-
+    //规格属性的值，多个值时用逗号分隔
     private String inputList;
-
+    //手动添加的规格属性的值
     private String value;
 
     public Integer getId() {

@@ -11,9 +11,11 @@ public class CartItem {
     private String skuCode;
     private float skuPrice;
     private Integer skuStock;
+    //商品规格属性
     private String spec1;
     private String spec2;
     private String spec3;
+    //购物车商品数量
     private Integer quantity;
     private String createTime;
     private float itemTotalPrice;

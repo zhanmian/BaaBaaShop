@@ -196,6 +196,7 @@ $(document).ready(function()
                 param.skuId = skuId;
                 param.quantity = quantity;
 
+                //更新商品数量至cookie或数据库表
                 $.ajax({
                     type: 'post',
                     data: param,
@@ -204,7 +205,7 @@ $(document).ready(function()
                         //如果数量大于库存数量则不允许增加并弹框提示
                         if (response.code === 1) {
                             alert(response.message);
-                            //如果没有超过就更新数量和总价
+						//如果没有超过就更新数量和总价
                         } else {
                             dom.val(quantity);
                             var price = $('#' + skuId).find('span[class*=price]').text();
@@ -235,13 +236,12 @@ $(document).ready(function()
                 param.skuId = skuId;
                 param.quantity = quantity;
 
+				//更新商品数量至cookie或数据库表
                 $.ajax({
                     type: 'post',
                     data: param,
                     url: baseUrl + '/baabaa/update_quantity',
-                    success: function (response) {
-
-                    }
+                    success: function (response) {}
                 });
             });
         }

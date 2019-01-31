@@ -22,6 +22,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -109,6 +111,12 @@ public class CustomerServiceImp implements CustomerService {
                             CartItem cartItem) {
         ResultData resultData = new ResultData();
         try{
+            Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
+            if(cartItem.getQuantity() > skuStock){
+                resultData.setMessage("没有更多库存了");
+                return resultData;
+            }
+
             ObjectMapper objectMapper = new ObjectMapper();
             //如果对象中有Null值的就忽略，不转为Json
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -139,6 +147,7 @@ public class CustomerServiceImp implements CustomerService {
                 cartCookie.setPath("/");
                 response.addCookie(cartCookie);
                 resultData.setMessage("购物车添加成功");
+
             //如果用户登录了，那么将cookie中的购物车写入数据库
             }else{
                 Integer customerId = customerDao.selectCustomerIdByUsername(username);
@@ -210,11 +219,9 @@ public class CustomerServiceImp implements CustomerService {
         //如果用户登录就从数据库购物车表获取商品列表
         }else{
             Integer customerId = customerDao.selectCustomerIdByUsername(username);
-            Cart cart = new Cart();
-            CartItem cartItem = new CartItem();
-            cartItem.setCustomerId(customerId);
             //根据用户ID查找购物车表的商品列表
-            List<CartItem> cartItems = customerDao.selectCartByCustomerId(cartItem);
+            List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
+            Cart cart = new Cart();
             cart.setItems(cartItems);
             model.addAttribute("cart", cart);
             model.addAttribute("totalPrice", cart.getTotalPrice());
@@ -285,7 +292,83 @@ public class CustomerServiceImp implements CustomerService {
         return resultData;
     }
 
-    public Cart getCartFromCookie(Cookie[] cookies, ObjectMapper objectMapper)throws IOException{
+    @Override
+    public String checkOut(HttpServletRequest request, Model model){
+        HttpSession session = request.getSession();
+        String username = (String)session.getAttribute("username");
+        //如果用户已经登录就从数据库购物车表获取商品
+        if(username != null && !username.equals(" ")){
+            Integer customerId = customerDao.selectCustomerIdByUsername(username);
+            //根据用户ID获得该用户的购物车商品列表
+            List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
+            Cart cart = new Cart();
+            cart.setItems(cartItems);
+
+            model.addAttribute("cartItems", cart);
+            model.addAttribute("totalPrice", cart.getTotalPrice());
+        }else{
+            //用户没有登录就让用户登录
+            return "online_shop/client/online_shop_login";
+        }
+        return "online_shop/client/checkout";
+    }
+
+    @Override
+    @Transactional
+    public ResultData generateOrder(HttpServletRequest request, Order orderParam){
+        ResultData resultData = new ResultData();
+
+        HttpSession session = request.getSession();
+        Integer customerId = customerDao.selectCustomerIdByUsername((String)session.getAttribute("username"));
+        List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
+
+        for(CartItem item : cartItems){
+            CartItem cartItem = customerDao.selectItemBySkuId(item);
+            if(cartItem.getSkuStock() <= 0){
+                resultData.setMessage("库存不足无法下单");
+                return resultData;
+            }
+        }
+
+        try{
+            Order order = new Order();
+            order.setCustomerId(customerId);
+            order.setTotalAmount(orderParam.getTotalAmount());
+            order.setPayType(orderParam.getPayType());
+            order.setStatus(0);
+            order.setConfirmStatus(0);
+            order.setOrderCode(generateOrderSn(order, customerId));
+            customerDao.generateOrder(order);
+
+            for(CartItem item : cartItems){
+                OrderItem orderItem = new OrderItem();
+                orderItem.setCustomerId(customerId);
+                orderItem.setOrderCode(order.getOrderCode());
+                orderItem.setOrderId(order.getId());
+                orderItem.setProductId(item.getProductId());
+                orderItem.setSkuId(item.getSkuId());
+                orderItem.setQuantity(item.getQuantity());
+                customerDao.insertOrderItem(orderItem);
+                //减库存
+                CartItem cartItem = customerDao.selectItemBySkuId(item);
+                cartItem.setSkuStock(cartItem.getSkuStock()-item.getQuantity());
+                customerDao.updateSkuStock(cartItem);
+            }
+            //删除购物车
+            customerDao.deleteCartByCustomerId(customerId);
+            resultData.setMessage("订单生成成功");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+
+    private Cart getCartFromCookie(Cookie[] cookies, ObjectMapper objectMapper)throws IOException{
         Cart cart = null;
         for(Cookie cookie : cookies){
             //解码
@@ -300,7 +383,7 @@ public class CustomerServiceImp implements CustomerService {
         return cart;
     }
 
-    public static String md5Password(String password) {
+    private static String md5Password(String password) {
         try {
             // 得到一个信息摘要器
             MessageDigest digest = MessageDigest.getInstance("md5");
@@ -322,5 +405,27 @@ public class CustomerServiceImp implements CustomerService {
             e.printStackTrace();
             return "";
         }
+    }
+
+    /**
+     * 生成18位订单编号:8位日期+2位支付方式+2位随机数+用户id
+     */
+    private String generateOrderSn(Order order, Integer customerId) {
+        StringBuilder sb = new StringBuilder();
+        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        Integer random = (int) (1 + Math.random()*(98-1+1));
+        sb.append(date);
+        sb.append(String.format("%02d",order.getPayType()));
+        if(random.toString().length() < 2){
+            sb.append(String.format("%02d",random));
+        }else{
+            sb.append(random);
+        }
+        if(customerId.toString().length() <= 5){
+            sb.append(String.format("%05d",customerId));
+        }else{
+            sb.append(customerId);
+        }
+        return sb.toString();
     }
 }

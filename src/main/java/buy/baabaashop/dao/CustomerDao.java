@@ -30,5 +30,9 @@ public interface CustomerDao {
     //根据SkuId查找商品详情，主要用于查找库存数量
     CartItem selectItemBySkuId(CartItem cartItem);
     //根据用户ID查找该用户的购物车商品列表
-    List<CartItem> selectCartByCustomerId(CartItem cartItem);
+    List<CartItem> selectCartByCustomerId(@Param("customerId") Integer customerId);
+    void generateOrder(Order order);
+    void insertOrderItem(OrderItem orderItem);
+    void updateSkuStock(CartItem cartItem);
+    void deleteCartByCustomerId(@Param("customerId") Integer customerId);
 }

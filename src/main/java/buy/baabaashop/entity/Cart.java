@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Cart {
     private List<CartItem> items = new ArrayList<>();
-    private float totalPrice;
 
     public List<CartItem> getItems() {
         return items;

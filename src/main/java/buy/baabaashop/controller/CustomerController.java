@@ -112,8 +112,14 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "checkout")
-    public String toCheckout(){
-        return "online_shop/client/checkout";
+    public String toCheckout(HttpServletRequest request, Model model){
+        return customerServiceImp.checkOut(request, model);
+    }
+
+    @RequestMapping(value = "generate_order")
+    @ResponseBody
+    public ResultData generateOrder(HttpServletRequest request, Order orderParam){
+        return customerServiceImp.generateOrder(request, orderParam);
     }
 
     //从request获取JSON
