@@ -177,16 +177,20 @@ function generateOrder(){
 	var payType = $("input[type='radio'][name='pay-type']:checked").val();
 	var totalAmount = $('#total-amount').text();
 
-	var param = {};
-	param.payType = payType;
-	param.totalAmount = totalAmount;
+	// var param = {};
+	// param.payType = payType;
+	// param.totalAmount = totalAmount;
 
-	$.ajax({
-		type : 'post',
-		data : param,
-		url : baseUrl + '/baabaa/generate_order',
-		success : function(response){
-			alert(response.message);
-		}
-	})
+	window.location.href = baseUrl +'/baabaa/generate_order?payType='+payType+'&totalAmount='+totalAmount;
+
+	// $.ajax({
+	// 	type : 'post',
+	// 	data : param,
+	// 	url : baseUrl + '/baabaa/generate_order',
+	// 	success : function(response){
+	// 	    if(response.code === 404){
+    //             alert(response.message);
+    //         }
+	// 	}
+	// })
 }

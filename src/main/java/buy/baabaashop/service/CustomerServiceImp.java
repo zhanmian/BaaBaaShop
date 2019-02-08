@@ -2,8 +2,12 @@ package buy.baabaashop.service;
 
 import buy.baabaashop.common.CommonException;
 import buy.baabaashop.common.ResultData;
+import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -11,6 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -315,23 +320,25 @@ public class CustomerServiceImp implements CustomerService {
 
     @Override
     @Transactional
-    public ResultData generateOrder(HttpServletRequest request, Order orderParam){
+    public String generateOrder(HttpServletRequest request, HttpServletResponse response,
+                                Order orderParam, RedirectAttributes attributes){
         ResultData resultData = new ResultData();
+        Order order = new Order();
 
         HttpSession session = request.getSession();
         Integer customerId = customerDao.selectCustomerIdByUsername((String)session.getAttribute("username"));
         List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
 
-        for(CartItem item : cartItems){
-            CartItem cartItem = customerDao.selectItemBySkuId(item);
-            if(cartItem.getSkuStock() <= 0){
-                resultData.setMessage("库存不足无法下单");
-                return resultData;
-            }
-        }
+//        for(CartItem item : cartItems){
+//            CartItem cartItem = customerDao.selectItemBySkuId(item);
+//            if(cartItem.getSkuStock() <= 0){
+//                resultData.setCode(404);
+//                resultData.setMessage("库存不足无法下单");
+//                return resultData;
+//            }
+//        }
 
         try{
-            Order order = new Order();
             order.setCustomerId(customerId);
             order.setTotalAmount(orderParam.getTotalAmount());
             order.setPayType(orderParam.getPayType());
@@ -356,7 +363,7 @@ public class CustomerServiceImp implements CustomerService {
             }
             //删除购物车
             customerDao.deleteCartByCustomerId(customerId);
-            resultData.setMessage("订单生成成功");
+
         }catch(CommonException c){
             c.printStackTrace();
             throw new CommonException(c.getCode(), c.getMessage());
@@ -364,9 +371,17 @@ public class CustomerServiceImp implements CustomerService {
             e.printStackTrace();
             throw new CommonException();
         }
-        return resultData;
-    }
 
+        try{
+            if(orderParam.getPayType() == 1){
+                attributes.addFlashAttribute(order);
+                return "redirect:/baabaa/alipay";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private Cart getCartFromCookie(Cookie[] cookies, ObjectMapper objectMapper)throws IOException{
         Cart cart = null;
@@ -408,16 +423,16 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     /**
-     * 生成18位订单编号:8位日期+2位支付方式+2位随机数+用户id
+     * 生成18位订单编号:8位日期+2位支付方式+3位随机数+用户id
      */
     private String generateOrderSn(Order order, Integer customerId) {
         StringBuilder sb = new StringBuilder();
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        Integer random = (int) (1 + Math.random()*(98-1+1));
+        Integer random = (int) (Math.random()*100);
         sb.append(date);
         sb.append(String.format("%02d",order.getPayType()));
-        if(random.toString().length() < 2){
-            sb.append(String.format("%02d",random));
+        if(random.toString().length() < 3){
+            sb.append(String.format("%03d",random));
         }else{
             sb.append(random);
         }

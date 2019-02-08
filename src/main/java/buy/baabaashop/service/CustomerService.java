@@ -7,6 +7,7 @@ import buy.baabaashop.entity.Customer;
 import buy.baabaashop.entity.Order;
 import buy.baabaashop.entity.Product;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,5 +21,5 @@ public interface CustomerService {
     String toCart(HttpServletRequest request, Model model) throws IOException;
     ResultData updateQuantity(HttpServletRequest request, HttpServletResponse response, CartItem cartItem) throws IOException;
     String checkOut(HttpServletRequest request, Model model);
-    ResultData generateOrder(HttpServletRequest request, Order orderParam);
+    Object generateOrder(HttpServletRequest request, HttpServletResponse response, Order orderParam, RedirectAttributes attributes);
 }
