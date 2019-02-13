@@ -137,6 +137,7 @@ public class AdminController {
         map.put("inputList", inputList);
         map.put("inputStatus", inputStatus);
         return map;
+
     }
 
     //前往商品属性添加页面
