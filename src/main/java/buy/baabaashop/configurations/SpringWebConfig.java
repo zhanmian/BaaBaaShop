@@ -1,8 +1,10 @@
 package buy.baabaashop.configurations;
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
@@ -113,6 +115,18 @@ public class SpringWebConfig implements WebMvcConfigurer {
 //                .excludePathPatterns("/img/**")
 //                .excludePathPatterns("/admin/get_permission_list")
 //                .excludePathPatterns("/fonts/**");
+    }
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*")
+                        .allowedMethods("*").allowedHeaders("*")
+                        .allowCredentials(true)
+                        .exposedHeaders(HttpHeaders.SET_COOKIE).maxAge(3600L);
+            }
+        };
     }
 
 }

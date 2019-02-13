@@ -37,4 +37,21 @@ public interface ProductDao {
     void addProduct(Product product);
     void addProductSku(ProductSku productSku);
     void addAttributeValue(ProductAttribute productAttribute);
+
+    //删除商品分类
+    void deleteProductCategory(@Param("id") Integer categoryId);
+    //删除商品分类的同时删除子分类
+    void deleteProductSubcategory(@Param("id") Integer categoryId);
+    //删除商品
+    void deleteProduct(@Param("id") Integer productId);
+    //删除商品的同时删除添加商品时手动添加的商品属性
+    void deleteProductAttributeValue(@Param("id") Integer productId);
+    //删除商品也要删除关联的SKU
+    void deleteSku(@Param("id") Integer productId);
+    //删除商品属性分类
+    void deleteProductAttributeCategory(@Param("id") Integer categoryId);
+    //删除商品属性分类的同时删除所属的商品属性
+    void deleteProductAttributeByCategoryId(@Param("id") Integer categoryId);
+    //单独删除商品属性
+    void deleteProductAttribute(@Param("id") Integer attributeId);
 }

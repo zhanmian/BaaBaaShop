@@ -11,7 +11,7 @@ public class Product {
     private String createTime;
     private Integer categoryId;
     private String categoryName;
-    private Integer level;
+    private Integer categoryLevel;
     private Integer pId;
     private Integer attributeCount;
     private Integer paramCount;
@@ -90,12 +90,12 @@ public class Product {
         this.categoryName = categoryName;
     }
 
-    public Integer getLevel() {
-        return level;
+    public Integer getCategoryLevel() {
+        return categoryLevel;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setCategoryLevel(Integer categoryLevel) {
+        this.categoryLevel = categoryLevel;
     }
 
     public Integer getpId() {

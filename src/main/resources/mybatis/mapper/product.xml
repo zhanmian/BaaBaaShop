@@ -8,7 +8,7 @@
     <sql id="sqlForProduct">
         select p.id, product_code, product_name, product_price, sold, p.create_time, c.category_name
         from product p
-        left join category c on p.product_category_id = c.id
+        left join product_category c on p.product_category_id = c.id
     </sql>
 
     <select id="selectProductList" resultType="buy.baabaashop.entity.Product">
@@ -35,17 +35,17 @@
     </resultMap>
 
     <select id="selectProductCategoryList" resultMap="productCategory">
-        select id, category_name, create_time from category where p_id=#{categoryId} limit #{from}, #{pageSize}
+        select id, category_level, category_name, create_time from product_category where p_id=#{categoryId} limit #{from}, #{pageSize}
     </select>
     <select id="selectAllParentProductCategory" resultMap="productCategory">
-        select id, category_name from category where p_id=0
+        select id, category_name from product_category where p_id=0
     </select>
     <resultMap id="productCategory" type="buy.baabaashop.entity.Product">
         <result property="categoryId" column="id"></result>
     </resultMap>
 
     <select id="selectProductCategoryTotalRecord" resultType="Integer">
-        select count(*) from category where p_id=0
+        select count(*) from product_category where p_id=0
     </select>
 
     <select id="selectProductAttributeCategory" resultType="buy.baabaashop.entity.Product">
@@ -236,5 +236,37 @@
         </if>
         where id = #{id}
     </update>
+    
+    <delete id="deleteProduct" parameterType="Integer">
+        delete from product where id=#{id}
+    </delete>
+
+    <delete id="deleteProductAttributeValue" parameterType="Integer">
+        delete from product_attribute_value where product_id=#{id}
+    </delete>
+
+    <delete id="deleteSku" parameterType="Integer">
+        delete from sku where product_id=#{id}
+    </delete>
+
+    <delete id="deleteProductCategory" parameterType="Integer">
+        delete from product_category where id=#{id}
+    </delete>
+
+    <delete id="deleteProductSubcategory" parameterType="Integer">
+        delete from product_category where p_id=#{id}
+    </delete>
+
+    <delete id="deleteProductAttributeCategory" parameterType="Integer">
+        delete from product_attribute_category where id=#{id}
+    </delete>
+
+    <delete id="deleteProductAttributeByCategoryId" parameterType="Integer">
+        delete from product_attribute where attribute_category_id=#{id}
+    </delete>
+
+    <delete id="deleteProductAttribute" parameterType="Integer">
+        delete from product_attribute where id=#{id}
+    </delete>
 
 </mapper>

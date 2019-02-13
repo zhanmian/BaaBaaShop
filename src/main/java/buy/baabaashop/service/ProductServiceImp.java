@@ -31,7 +31,7 @@ public class ProductServiceImp implements ProductService {
         Integer totalRecord = productDao.selectProductCategoryTotalRecord();
 
         PaginationResultData<Product> resultData = new PaginationResultData<Product>();
-        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        resultData.setTotalRecord(totalRecord);
 
         List<Product> list = productDao.selectProductCategoryList(param);
         resultData.setList(list);
@@ -67,7 +67,7 @@ public class ProductServiceImp implements ProductService {
         Integer totalRecord = productDao.selectProductAttributeCategoryTotalRecord();
 
         PaginationResultData<Product> resultData = new PaginationResultData<Product>();
-        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        resultData.setTotalRecord(totalRecord);
 
         List<Product> list = productDao.selectProductAttributeCategory(param);
         resultData.setList(list);
@@ -97,7 +97,7 @@ public class ProductServiceImp implements ProductService {
         Integer totalRecord = productDao.selectProductAttributeTotalRecord(param);
 
         PaginationResultData<ProductAttribute> resultData = new PaginationResultData<ProductAttribute>();
-        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        resultData.setTotalRecord(totalRecord);
 
         List<ProductAttribute> list = productDao.selectProductAttribute(param);
         resultData.setList(list);
@@ -240,11 +240,12 @@ public class ProductServiceImp implements ProductService {
     public PaginationResultData<Product> getProductList(PaginationRequestParam param){
         PaginationResultData<Product> resultData = new PaginationResultData<>();
         Integer totalRecord = productDao.selectProductTotalRecord();
-        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        resultData.setTotalRecord(totalRecord);
         List<Product> list = productDao.selectProductList(param);
         resultData.setList(list);
         return resultData;
     }
+
 
     @Override
     public Object getSkuDetails(Integer productId){
@@ -265,6 +266,85 @@ public class ProductServiceImp implements ProductService {
 //        map.put("productCode", product.getProductCode());
 //        map.put("attributeList", attributeList);
         return skuList;
+    }
+
+    @Override
+    @Transactional
+    public ResultData deleteProductCategory(Integer categoryId){
+        ResultData resultData = new ResultData();
+        try{
+            //删除商品分类
+            productDao.deleteProductCategory(categoryId);
+            //删除商品分类的子类
+            productDao.deleteProductSubcategory(categoryId);
+            resultData.setMessage("成功删除所选的商品分类");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    @Transactional
+    public ResultData deleteProduct(Integer productId){
+        ResultData resultData = new ResultData();
+        try{
+            //删除商品
+            productDao.deleteProduct(productId);
+            //删除SKU
+            productDao.deleteSku(productId);
+            //删除添加商品时手动添加的商品属性
+            productDao.deleteProductAttributeValue(productId);
+            resultData.setMessage("成功删除所选的商品");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    @Transactional
+    public ResultData deleteProductAttributeCategory(Integer categoryId){
+        ResultData resultData = new ResultData();
+        try{
+            //删除商品属性分类
+            productDao.deleteProductAttributeCategory(categoryId);
+            //删除从属于该商品属性分类的所有商品属性
+            productDao.deleteProductAttributeByCategoryId(categoryId);
+            resultData.setMessage("成功删除所选的商品属性分类");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    @Transactional
+    public ResultData deleteProductAttribute(Integer attributeId){
+        ResultData resultData = new ResultData();
+        try{
+            productDao.deleteProductAttribute(attributeId);
+            resultData.setMessage("成功删除所选的商品属性");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
     }
 }
 
