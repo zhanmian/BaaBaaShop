@@ -5,9 +5,7 @@ import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.ProductDao;
-import buy.baabaashop.entity.Product;
-import buy.baabaashop.entity.ProductAttribute;
-import buy.baabaashop.entity.ProductSku;
+import buy.baabaashop.entity.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -26,22 +24,17 @@ public class ProductServiceImp implements ProductService {
     public ProductDao productDao;
 
     @Override
-    public PaginationResultData<Product> selectProductCategoryList(PaginationRequestParam param){
+    public PaginationResultData<ProductCategory> selectProductCategoryList(PaginationRequestParam param){
 
         Integer totalRecord = productDao.selectProductCategoryTotalRecord();
 
-        PaginationResultData<Product> resultData = new PaginationResultData<Product>();
+        PaginationResultData<ProductCategory> resultData = new PaginationResultData<>();
         resultData.setTotalRecord(totalRecord);
 
-        List<Product> list = productDao.selectProductCategoryList(param);
+        List<ProductCategory> list = productDao.selectProductCategoryList(param);
         resultData.setList(list);
 
         return resultData;
-    }
-
-    @Override
-    public List<Product> selectAllParentProductCategory(){
-        return productDao.selectAllParentProductCategory();
     }
 
     @Override
@@ -62,14 +55,14 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public PaginationResultData<Product> selectProductAttributeCategory(PaginationRequestParam param){
+    public PaginationResultData<ProductAttribute> selectProductAttributeCategory(PaginationRequestParam param){
 
         Integer totalRecord = productDao.selectProductAttributeCategoryTotalRecord();
 
-        PaginationResultData<Product> resultData = new PaginationResultData<Product>();
+        PaginationResultData<ProductAttribute> resultData = new PaginationResultData<>();
         resultData.setTotalRecord(totalRecord);
 
-        List<Product> list = productDao.selectProductAttributeCategory(param);
+        List<ProductAttribute> list = productDao.selectProductAttributeCategory(param);
         resultData.setList(list);
 
         return resultData;
@@ -346,6 +339,12 @@ public class ProductServiceImp implements ProductService {
         }
         return resultData;
     }
+
+    @Override
+    public List<ProductCategoryWithChildrenItem> getProductCategoryWithChildren(){
+        return productDao.selectProductCategoryWithChildren();
+    }
+
 }
 
 

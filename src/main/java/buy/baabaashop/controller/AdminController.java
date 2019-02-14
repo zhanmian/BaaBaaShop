@@ -4,9 +4,7 @@ import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.ProductDao;
-import buy.baabaashop.entity.Product;
-import buy.baabaashop.entity.ProductAttribute;
-import buy.baabaashop.entity.ProductSku;
+import buy.baabaashop.entity.*;
 import buy.baabaashop.service.ProductService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +77,7 @@ public class AdminController {
     //获取商品分类列表
     @RequestMapping(value = "/product_category")
     @ResponseBody
-    public PaginationResultData<Product> getProductCategoryList(
+    public PaginationResultData<ProductCategory> getProductCategoryList(
             @RequestBody PaginationRequestParam param){
         return productService.selectProductCategoryList(param);
     }
@@ -94,7 +92,7 @@ public class AdminController {
     //获取商品属性分类列表
     @RequestMapping(value = "/product_attribute_category")
     @ResponseBody
-    public PaginationResultData<Product> getProductAttributeCategory(
+    public PaginationResultData<ProductAttribute> getProductAttributeCategory(
             @RequestBody PaginationRequestParam param){
         return productService.selectProductAttributeCategory(param);
     }
@@ -140,34 +138,11 @@ public class AdminController {
 
     }
 
-    //前往商品属性添加页面
-    @RequestMapping(value = "to_add_product_attribute")
-    public String toAddProductAttribute(HttpServletRequest request,
-                                        ProductAttribute productAttribute,
-                                        Model model){
-        model.addAttribute("categoryId", productAttribute.getCategoryId());
-        model.addAttribute("type", productAttribute.getType());
-        model.addAttribute("productAttributeCategoryList",
-                productDao.selectAllProductAttributeCategory());
-        return "/online_shop/add_product_attribute";
-    }
-
     //添加商品属性
     @RequestMapping(value = "add_product_attribute")
     @ResponseBody
     public ResultData addProductAttribute(@RequestBody ProductAttribute productAttribute){
         return productService.addProductAttribute(productAttribute);
-    }
-
-    @RequestMapping(value = "to_update_product_attribute")
-    public String toUpdateProductAttribute(HttpServletRequest request,
-                                           ProductAttribute attribute,
-                                           Model model){
-        ProductAttribute productAttribute = productDao.selectProductAttributeById(attribute);
-        model.addAttribute("attribute", productAttribute);
-        model.addAttribute("productAttributeCategoryList",
-                productDao.selectAllProductAttributeCategory());
-        return "online_shop/update_product_attribute";
     }
 
     //更新商品属性
@@ -203,6 +178,13 @@ public class AdminController {
     @ResponseBody
     public ResultData deleteProductAttribute(@RequestBody Product product){
         return productService.deleteProductAttribute(product.getId());
+    }
+
+    //查询所有商品父分类和其子类
+    @RequestMapping(value = "get_product_category_with_children")
+    @ResponseBody
+    public List<ProductCategoryWithChildrenItem> getProductCategoryWithChildren(){
+        return productService.getProductCategoryWithChildren();
     }
 
     //上传图片

@@ -1,9 +1,7 @@
 package buy.baabaashop.dao;
 
 import buy.baabaashop.common.PaginationRequestParam;
-import buy.baabaashop.entity.Product;
-import buy.baabaashop.entity.ProductAttribute;
-import buy.baabaashop.entity.ProductSku;
+import buy.baabaashop.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,10 +13,8 @@ public interface ProductDao {
     List<Product> selectProductList(PaginationRequestParam param);
     Product selectProductCode(@Param("productId") Integer productId);
     List<ProductSku> selectSkuDetails(@Param("productId") Integer productId);
-    List<Product> selectProductCategoryList(PaginationRequestParam param);
-    List<Product> selectAllParentProductCategory();
-    List<Product> selectProductAttributeCategory(PaginationRequestParam param);
-    List<ProductAttribute> selectAllProductAttributeCategory();
+    List<ProductCategory> selectProductCategoryList(PaginationRequestParam param);
+    List<ProductAttribute> selectProductAttributeCategory(PaginationRequestParam param);
     List<ProductAttribute> selectProductAttribute(PaginationRequestParam param);
     List<ProductAttribute> selectProductAttributeByCategoryId(ProductAttribute productAttribute);
     Integer selectProductTotalRecord();
@@ -40,18 +36,28 @@ public interface ProductDao {
 
     //删除商品分类
     void deleteProductCategory(@Param("id") Integer categoryId);
+
     //删除商品分类的同时删除子分类
     void deleteProductSubcategory(@Param("id") Integer categoryId);
+
     //删除商品
     void deleteProduct(@Param("id") Integer productId);
+
     //删除商品的同时删除添加商品时手动添加的商品属性
     void deleteProductAttributeValue(@Param("id") Integer productId);
+
     //删除商品也要删除关联的SKU
     void deleteSku(@Param("id") Integer productId);
+
     //删除商品属性分类
     void deleteProductAttributeCategory(@Param("id") Integer categoryId);
+
     //删除商品属性分类的同时删除所属的商品属性
     void deleteProductAttributeByCategoryId(@Param("id") Integer categoryId);
+
     //单独删除商品属性
     void deleteProductAttribute(@Param("id") Integer attributeId);
+
+    //查找商品分类及子分类
+    List<ProductCategoryWithChildrenItem> selectProductCategoryWithChildren();
 }

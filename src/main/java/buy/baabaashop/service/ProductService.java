@@ -5,6 +5,8 @@ import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.entity.Product;
 import buy.baabaashop.entity.ProductAttribute;
+import buy.baabaashop.entity.ProductCategory;
+import buy.baabaashop.entity.ProductCategoryWithChildrenItem;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -13,13 +15,11 @@ public interface ProductService {
 
     PaginationResultData<Product> getProductList(PaginationRequestParam param);
 
-    PaginationResultData<Product> selectProductCategoryList(PaginationRequestParam param);
-
-    List<Product> selectAllParentProductCategory();
+    PaginationResultData<ProductCategory> selectProductCategoryList(PaginationRequestParam param);
 
     ResultData addProductCategory(Product product);
 
-    PaginationResultData<Product> selectProductAttributeCategory(PaginationRequestParam param);
+    PaginationResultData<ProductAttribute> selectProductAttributeCategory(PaginationRequestParam param);
 
     ResultData addProductAttributeCategory(ProductAttribute productAttribute);
 
@@ -40,4 +40,6 @@ public interface ProductService {
     ResultData deleteProductAttributeCategory(Integer categoryId);
 
     ResultData deleteProductAttribute(Integer id);
+
+    List<ProductCategoryWithChildrenItem> getProductCategoryWithChildren();
 }

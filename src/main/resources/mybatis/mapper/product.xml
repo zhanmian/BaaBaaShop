@@ -34,30 +34,20 @@
         <result property="categoryId" column="product_attribute_category_id"></result>
     </resultMap>
 
-    <select id="selectProductCategoryList" resultMap="productCategory">
-        select id, category_level, category_name, create_time from product_category where p_id=#{categoryId} limit #{from}, #{pageSize}
+    <select id="selectProductCategoryList" resultType="buy.baabaashop.entity.ProductCategory">
+        select id, category_level, category_name, create_time from product_category where parent_id=#{categoryId} limit #{from}, #{pageSize}
     </select>
-    <select id="selectAllParentProductCategory" resultMap="productCategory">
-        select id, category_name from product_category where p_id=0
-    </select>
-    <resultMap id="productCategory" type="buy.baabaashop.entity.Product">
-        <result property="categoryId" column="id"></result>
-    </resultMap>
 
     <select id="selectProductCategoryTotalRecord" resultType="Integer">
-        select count(*) from product_category where p_id=0
+        select count(*) from product_category where parent_id=0
     </select>
 
-    <select id="selectProductAttributeCategory" resultType="buy.baabaashop.entity.Product">
+    <select id="selectProductAttributeCategory" resultType="buy.baabaashop.entity.ProductAttribute">
         select * from product_attribute_category limit #{from}, #{pageSize}
     </select>
 
     <select id="selectProductAttributeCategoryTotalRecord" resultType="Integer">
         select count(*) from product_attribute_category
-    </select>
-
-    <select id="selectAllProductAttributeCategory" resultType="buy.baabaashop.entity.ProductAttribute">
-        select * from product_attribute_category
     </select>
 
     <select id="selectProductAttributeCategoryAttributeCount" resultType="Integer">
@@ -95,6 +85,21 @@
     </select>
     <resultMap id="productAttribute" type="buy.baabaashop.entity.ProductAttribute">
         <result property="categoryId" column="attribute_category_id"></result>
+    </resultMap>
+
+    <select id="selectProductCategoryWithChildren" resultMap="categoryListWithChildren">
+        select c1.id, c1.category_name, c2.id as child_id, c2.category_name as child_category_name
+        from product_category c1 left join product_category c2 on c1.id=c2.parent_id
+        where c1.parent_id=0
+    </select>
+    <resultMap id="categoryListWithChildren" type="buy.baabaashop.entity.ProductCategoryWithChildrenItem"
+        extends="children">
+        <collection property="children" resultMap="children"
+                    columnPrefix="child_"></collection>
+    </resultMap>
+    <resultMap id="children" type="buy.baabaashop.entity.ProductCategory">
+        <result column="id" property="id"></result>
+        <result column="category_name" property="categoryName"></result>
     </resultMap>
 
     <insert id="addProduct" parameterType="buy.baabaashop.entity.Product">
@@ -157,13 +162,13 @@
 
     <insert id="addProductCategory" parameterType="buy.baabaashop.entity.Product">
         insert into category (
-        <if test="pId!=null">p_id, </if>
+        <if test="parentId!=null">parent_id, </if>
         <if test="categoryName!=null">category_name, </if>
         <if test="level!=null">level, </if>
         create_time
         )
         values(
-        <if test="pId!=null">#{pId}, </if>
+        <if test="parentId!=null">#{parentId}, </if>
         <if test="categoryName!=null">#{categoryName}, </if>
         <if test="level!=null">#{level}, </if>
         now()
@@ -254,7 +259,7 @@
     </delete>
 
     <delete id="deleteProductSubcategory" parameterType="Integer">
-        delete from product_category where p_id=#{id}
+        delete from product_category where parent_id=#{id}
     </delete>
 
     <delete id="deleteProductAttributeCategory" parameterType="Integer">

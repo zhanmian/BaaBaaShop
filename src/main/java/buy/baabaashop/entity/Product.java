@@ -12,9 +12,6 @@ public class Product {
     private Integer categoryId;
     private String categoryName;
     private Integer categoryLevel;
-    private Integer pId;
-    private Integer attributeCount;
-    private Integer paramCount;
     private String skuList;
     private Integer attributeCategoryId;
 
@@ -96,30 +93,6 @@ public class Product {
 
     public void setCategoryLevel(Integer categoryLevel) {
         this.categoryLevel = categoryLevel;
-    }
-
-    public Integer getpId() {
-        return pId;
-    }
-
-    public void setpId(Integer pId) {
-        this.pId = pId;
-    }
-
-    public Integer getAttributeCount() {
-        return attributeCount;
-    }
-
-    public void setAttributeCount(Integer attributeCount) {
-        this.attributeCount = attributeCount;
-    }
-
-    public Integer getParamCount() {
-        return paramCount;
-    }
-
-    public void setParamCount(Integer paramCount) {
-        this.paramCount = paramCount;
     }
 
     public String getSkuList() {
