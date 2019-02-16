@@ -42,6 +42,10 @@
         select count(*) from product_category where parent_id=0
     </select>
 
+    <select id="selectProductCategoryById" resultType="buy.baabaashop.entity.ProductCategory">
+        select * from product_category where id=#{id}
+    </select>
+
     <select id="selectProductAttributeCategory" resultType="buy.baabaashop.entity.ProductAttribute">
         select * from product_attribute_category limit #{from}, #{pageSize}
     </select>
@@ -50,12 +54,8 @@
         select count(*) from product_attribute_category
     </select>
 
-    <select id="selectProductAttributeCategoryAttributeCount" resultType="Integer">
-        select attribute_count from product_attribute_category where id = #{categoryId}
-    </select>
-
-    <select id="selectProductAttributeCategoryParamCount" resultType="Integer">
-        select param_count from product_attribute_category where id = #{categoryId}
+    <select id="selectProductAttributeCategoryById" resultType="buy.baabaashop.entity.ProductAttribute">
+        select * from product_attribute_category where id=#{id}
     </select>
 
     <sql id="productAttribute">
@@ -102,7 +102,7 @@
         <result column="category_name" property="categoryName"></result>
     </resultMap>
 
-    <insert id="addProduct" parameterType="buy.baabaashop.entity.Product">
+    <insert id="addProduct" parameterType="buy.baabaashop.entity.ProductParam">
         <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
             SELECT LAST_INSERT_ID() as id
         </selectKey>
@@ -110,8 +110,8 @@
         <if test="productName!=null">product_name,</if>
         <if test="productCode!=null">product_code,</if>
         <if test="productPrice!=null">product_price,</if>
-        <if test="categoryId!=null">product_category_id,</if>
-        <if test="attributeCategoryId!=null">product_attribute_category_id,</if>
+        <if test="productCategoryId!=null">product_category_id,</if>
+        <if test="productAttributeCategoryId!=null">product_attribute_category_id,</if>
         <if test="picture!=null">picture,</if>
         <if test="description!=null">description</if>
         )
@@ -119,8 +119,8 @@
         <if test="productName!=null">#{productName},</if>
         <if test="productCode!=null">#{productCode},</if>
         <if test="productPrice!=null">#{productPrice},</if>
-        <if test="categoryId!=null">#{categoryId},</if>
-        <if test="attributeCategoryId!=null">#{attributeCategoryId},</if>
+        <if test="productCategoryId!=null">#{productCategoryId},</if>
+        <if test="productAttributeCategoryId!=null">#{productAttributeCategoryId},</if>
         <if test="picture!=null">#{picture},</if>
         <if test="description!=null">#{description}</if>
         )
@@ -151,27 +151,25 @@
         insert into product_attribute_value (
         <if test="productId!=null"> product_id, </if>
         <if test="id!=null">attribute_id, </if>
-        <if test="attributeName!=null">value </if>
+        <if test="value!=null">value </if>
         )
         values(
         <if test="productId!=null"> #{productId}, </if>
         <if test="id!=null">#{id}, </if>
-        <if test="attributeName!=null">#{attributeName} </if>
+        <if test="value!=null">#{value} </if>
         )
     </insert>
 
-    <insert id="addProductCategory" parameterType="buy.baabaashop.entity.Product">
-        insert into category (
+    <insert id="addProductCategory" parameterType="buy.baabaashop.entity.ProductCategory">
+        insert into product_category (
         <if test="parentId!=null">parent_id, </if>
         <if test="categoryName!=null">category_name, </if>
-        <if test="level!=null">level, </if>
-        create_time
+        <if test="categoryLevel!=null">category_level </if>
         )
         values(
         <if test="parentId!=null">#{parentId}, </if>
         <if test="categoryName!=null">#{categoryName}, </if>
-        <if test="level!=null">#{level}, </if>
-        now()
+        <if test="categoryLevel!=null">#{categoryLevel}</if>
         )
     </insert>
 
@@ -184,10 +182,19 @@
         )
     </insert>
 
+    <update id="updateProductAttributeCategory" parameterType="buy.baabaashop.entity.ProductAttribute">
+        update product_attribute_category set
+        category_name=#{categoryName},
+        attribute_count=#{attributeCount},
+        param_count=#{paramCount}
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
+
     <insert id="addProductAttribute" parameterType="buy.baabaashop.entity.ProductAttribute">
         insert into product_attribute(
         <if test="attributeName!=null">attribute_name,</if>
-        <if test="categoryId!=null">attribute_category_id,</if>
+        <if test="id!=null">attribute_category_id,</if>
         <if test="inputStatus!=null">input_status,</if>
         <if test="selectType!=null">select_type,</if>
         <if test="inputList!=null">input_list,</if>
@@ -195,7 +202,7 @@
         )
         values(
         <if test="attributeName!=null">#{attributeName},</if>
-        <if test="categoryId!=null">#{categoryId},</if>
+        <if test="id!=null">#{id},</if>
         <if test="inputStatus!=null">#{inputStatus},</if>
         <if test="selectType!=null">#{selectType},</if>
         <if test="inputList!=null">#{inputList},</if>
@@ -209,7 +216,7 @@
         <if test="attributeCount!=null">
             attribute_count = #{attributeCount}
         </if>
-        where id = #{categoryId}
+        where id = #{categroyId}
     </update>
 
     <update id="updateProductAttributeCategoryParamCount"
@@ -270,8 +277,52 @@
         delete from product_attribute where attribute_category_id=#{id}
     </delete>
 
-    <delete id="deleteProductAttribute" parameterType="Integer">
+    <delete id="deleteProductAttribute" parameterType="buy.baabaashop.entity.ProductAttribute">
         delete from product_attribute where id=#{id}
     </delete>
+
+    <update id="updateProductCategory" parameterType="buy.baabaashop.entity.ProductCategory">
+        update product_category set
+        <if test="categoryName!=null">category_name=#{categoryName},</if>
+        <if test="categoryLevel!=null">category_level=#{categoryLevel},</if>
+        <if test="parentId!=null">parent_id=#{parentId}</if>
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
+
+    <update id="updateProduct" parameterType="buy.baabaashop.entity.ProductParam">
+        update product set
+        <if test="productName!=null">product_name=#{productName},</if>
+        <if test="productCode!=null">product_code=#{productCode},</if>
+        <if test="productPrice!=null">product_price=#{productPrice},</if>
+        <if test="productCategoryId!=null">product_categroy_id=#{productCategoryId},</if>
+        <if test="productAttributeCategoryId!=null">product_attribute_categoryId=#{productAttributeCategoryId},</if>
+        <if test="description!=null">description=#{description},</if>
+        <if test="picture!=null">picture=#{picture}</if>
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
+
+    <update id="updateProductSku" parameterType="buy.baabaashop.entity.ProductParam">
+        update sku set
+        <if test="productId!=null">product_id=#{productId},</if>
+        <if test="skuCode!=null">sku_code=#{skuCode},</if>
+        <if test="skuPrice!=null">sku_price=#{skuPrice},</if>
+        <if test="skuStock!=null">sku_stock=#{skuStock},</if>
+        <if test="spec1!=null">spec1=#{spec1},</if>
+        <if test="spec2!=null">spec2=#{spec2},</if>
+        <if test="spec3!=null">spec3=#{spec3}</if>
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
+
+    <update id="updateAttributeValue" parameterType="buy.baabaashop.entity.ProductParam">
+        update product_attribute_value set
+        <if test="productId!=null">product_id=#{productId},</if>
+        <if test="attributeId!=null">attribute_id=#{attributeId},</if>
+        <if test="value!=null">value=#{value}</if>
+        where
+        <if test="id!=null">id=#{id}</if>
+    </update>
 
 </mapper>

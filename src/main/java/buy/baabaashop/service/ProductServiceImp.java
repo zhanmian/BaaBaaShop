@@ -39,10 +39,10 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ResultData addProductCategory(Product product){
+    public ResultData addProductCategory(ProductCategory productCategory){
         ResultData resultData = new ResultData();
         try{
-            productDao.addProductCategory(product);
+            productDao.addProductCategory(productCategory);
             resultData.setMessage("添加分类成功");
         }catch(CommonException c){
             c.printStackTrace();
@@ -52,6 +52,27 @@ public class ProductServiceImp implements ProductService {
             throw new CommonException();
         }
         return resultData;
+    }
+
+    @Override
+    public ResultData updateProductCategory(ProductCategory productCategory){
+        ResultData resultData = new ResultData();
+        try{
+            productDao.updateProductCategory(productCategory);
+            resultData.setMessage("更新分类成功");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    public ProductCategory getProductCategoryById(ProductCategory productCategory){
+        return productDao.selectProductCategoryById(productCategory);
     }
 
     @Override
@@ -75,6 +96,23 @@ public class ProductServiceImp implements ProductService {
         try{
             productDao.addProductAttributeCategory(productAttribute);
             resultData.setMessage("添加属性分类成功");
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    @Transactional
+    public ResultData updateProductAttributeCategory(ProductAttribute productAttribute){
+        ResultData resultData = new ResultData();
+        try{
+            productDao.updateProductAttributeCategory(productAttribute);
+            resultData.setMessage("更新属性分类成功");
         }catch(CommonException c){
             c.printStackTrace();
             throw new CommonException(c.getCode(), c.getMessage());
@@ -111,18 +149,17 @@ public class ProductServiceImp implements ProductService {
         try{
             productDao.addProductAttribute(productAttribute);
             Integer type = productAttribute.getType();
-            Integer categoryId = productAttribute.getCategoryId();
+            Integer categoryId = productAttribute.getId();
+            ProductAttribute param = productDao.selectProductAttributeCategoryById(categoryId);
             //根据type判断是0（规格属性）还是1（参数属性）来增加计数
             if(type==0){
-                Integer attributeCount = productDao.selectProductAttributeCategoryAttributeCount(categoryId);
-                productAttribute.setAttributeCount(attributeCount+1);
-                productDao.updateProductAttributeCategoryAttributeCount(productAttribute);
+                param.setAttributeCount(param.getAttributeCount()+1);
             }else if(type ==1){
-                Integer paramCount = productDao.selectProductAttributeCategoryParamCount(categoryId);
-                productAttribute.setParamCount(paramCount+1);
-                productDao.updateProductAttributeCategoryParamCount(productAttribute);
+                param.setParamCount(param.getParamCount()+1);
             }
+            productDao.updateProductAttributeCategory(param);
             resultData.setMessage("新建商品属性成功");
+
         }catch(CommonException c){
             c.printStackTrace();
             throw new CommonException(c.getCode(), c.getMessage());
@@ -131,6 +168,11 @@ public class ProductServiceImp implements ProductService {
             throw new CommonException();
         }
         return resultData;
+    }
+
+    @Override
+    public ProductAttribute getProductAttributeById(ProductAttribute productAttribute){
+        return productDao.selectProductAttributeById(productAttribute);
     }
 
     @Override
@@ -158,67 +200,64 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ResultData addProduct(HttpServletRequest request){
+    public ResultData addProduct(ProductParam productParam){
         ResultData resultData = new ResultData();
         try{
-            //从request获取JSON数据
-            String jsonString = getRequestBodyAsString(request);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonTree = objectMapper.readTree(jsonString);
+            productDao.addProduct(productParam);
 
-            int categoryId = jsonTree.get("categoryId").asInt();
-            int attributeCategoryId = jsonTree.get("attributeCategoryId").asInt();
-            String productCode = jsonTree.get("productCode").asText();
-            Double productPrice = jsonTree.get("productPrice").asDouble();
-            String productName = jsonTree.get("productName").asText();
-            String description = jsonTree.get("description").asText();
-            String picture = jsonTree.get("picture").asText();
-
-            Product product = new Product();
-            product.setCategoryId(categoryId);
-            product.setProductCode(productCode);
-            product.setProductPrice(productPrice);
-            product.setAttributeCategoryId(attributeCategoryId);
-            product.setProductName(productName);
-            product.setDescription(description);
-            product.setPicture(picture);
-
-            productDao.addProduct(product);
-
-            JsonNode skuListTree = jsonTree.get("skuList");
-            for(JsonNode nodes : skuListTree){
-                for(JsonNode node : nodes) {
-                    ProductSku productSku = new ProductSku();
-                    int price = node.get("price").asInt();
-                    int stock = node.get("stock").asInt();
-                    String skuCode = node.get("skuCode").asText();
-                    String spec1 = node.get("spec1").asText();
-                    String spec2 = node.get("spec2").asText();
-                    if(node.size()==6){
-                        String spec3 = node.get("spec3").asText();
-                        productSku.setSpec3(spec3);
-                    }
-                    productSku.setSpec1(spec1);
-                    productSku.setSpec2(spec2);
-                    productSku.setProductId(product.getId());
-                    productSku.setSkuCode(skuCode);
-                    productSku.setSkuPrice(price);
-                    productSku.setSkuStock(stock);
+            List<ProductSku> skuStockList = productParam.getSkuStockList();
+            if(skuStockList != null && skuStockList.size() > 0){
+                for(ProductSku productSku : skuStockList){
+                    productSku.setProductId(productParam.getId());
                     productDao.addProductSku(productSku);
                 }
             }
-            //手动添加的属性写入数据库
-            JsonNode addAttrVal = jsonTree.get("addAttributeValue");
-            for(JsonNode attribute : addAttrVal){
-                ProductAttribute productAttribute = new ProductAttribute();
-                String attributeName = attribute.get("attributeName").asText();
-                Integer attributeId = attribute.get("attributeId").asInt();
-                productAttribute.setAttributeName(attributeName);
-                productAttribute.setId(attributeId);
-                productAttribute.setProductId(product.getId());
-                productDao.addAttributeValue(productAttribute);
+
+            List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
+            if(productAttributeValueList != null && productAttributeValueList.size() > 0){
+                for(ProductAttribute productAttribute : productAttributeValueList){
+                    productAttribute.setProductId(productParam.getId());
+                    productDao.addAttributeValue(productAttribute);
+                }
             }
+            resultData.setCode(1111);
             resultData.setMessage("添加商品成功");
+
+        }catch(CommonException c){
+            c.printStackTrace();
+            throw new CommonException(c.getCode(), c.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new CommonException();
+        }
+        return resultData;
+    }
+
+    @Override
+    @Transactional
+    public ResultData updateProduct(ProductParam productParam){
+        ResultData resultData = new ResultData();
+        try{
+            productDao.updateProduct(productParam);
+
+            List<ProductSku> skuStockList = productParam.getSkuStockList();
+            if(skuStockList != null && skuStockList.size() > 0){
+                for(ProductSku productSku : skuStockList){
+                    productSku.setProductId(productParam.getId());
+                    productDao.updateProductSku(productSku);
+                }
+            }
+
+            List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
+            if(productAttributeValueList != null && productAttributeValueList.size() > 0){
+                for(ProductAttribute productAttribute : productAttributeValueList){
+                    productAttribute.setProductId(productParam.getId());
+                    productDao.updateAttributeValue(productAttribute);
+                }
+            }
+            resultData.setCode(1111);
+            resultData.setMessage("更新商品成功");
+
         }catch(CommonException c){
             c.printStackTrace();
             throw new CommonException(c.getCode(), c.getMessage());
@@ -325,10 +364,20 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ResultData deleteProductAttribute(Integer attributeId){
+    public ResultData deleteProductAttribute(ProductAttribute productAttribute){
         ResultData resultData = new ResultData();
         try{
-            productDao.deleteProductAttribute(attributeId);
+            productDao.deleteProductAttribute(productAttribute);
+            Integer type = productAttribute.getType();
+            Integer categoryId = productAttribute.getCategoryId();
+            ProductAttribute param = productDao.selectProductAttributeCategoryById(categoryId);
+            //根据type判断是0（规格属性）还是1（参数属性）来增加计数
+            if(type==0){
+                param.setAttributeCount(param.getAttributeCount()-1);
+            }else if(type ==1){
+                param.setParamCount(param.getParamCount()-1);
+            }
+            productDao.updateProductAttributeCategory(param);
             resultData.setMessage("成功删除所选的商品属性");
         }catch(CommonException c){
             c.printStackTrace();

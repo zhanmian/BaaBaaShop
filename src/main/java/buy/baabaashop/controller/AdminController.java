@@ -51,10 +51,17 @@ public class AdminController {
     }
 
     //添加商品
-    @RequestMapping(value = "/add_product")
+    @RequestMapping(value = "add_product")
     @ResponseBody
-    public ResultData addProduct(HttpServletRequest request){
-        return productService.addProduct(request);
+    public ResultData addProduct(@RequestBody ProductParam productParam){
+        return productService.addProduct(productParam);
+    }
+
+    //更新商品
+    @RequestMapping(value = "update_product")
+    @ResponseBody
+    public ResultData updateProduct(@RequestBody ProductParam productParam){
+        return productService.updateProduct(productParam);
     }
 
     //获取商品列表
@@ -75,7 +82,7 @@ public class AdminController {
     }
 
     //获取商品分类列表
-    @RequestMapping(value = "/product_category")
+    @RequestMapping(value = "product_category")
     @ResponseBody
     public PaginationResultData<ProductCategory> getProductCategoryList(
             @RequestBody PaginationRequestParam param){
@@ -83,59 +90,56 @@ public class AdminController {
     }
 
     //添加商品分类
-    @RequestMapping(value = "/add_product_category")
+    @RequestMapping(value = "add_product_category")
     @ResponseBody
-    public ResultData addProductCategory(@RequestBody Product product){
-        return productService.addProductCategory(product);
+    public ResultData addProductCategory(@RequestBody ProductCategory productCategory){
+        return productService.addProductCategory(productCategory);
+    }
+
+    //更新商品分类
+    @RequestMapping(value = "update_product_category")
+    @ResponseBody
+    public ResultData updateProductCategory(@RequestBody ProductCategory productCategory){
+        return productService.updateProductCategory(productCategory);
     }
 
     //获取商品属性分类列表
-    @RequestMapping(value = "/product_attribute_category")
+    @RequestMapping(value = "product_attribute_category")
     @ResponseBody
     public PaginationResultData<ProductAttribute> getProductAttributeCategory(
             @RequestBody PaginationRequestParam param){
         return productService.selectProductAttributeCategory(param);
     }
 
+    //根据ID查找商品分类
+    @RequestMapping(value = "get_product_category_by_id")
+    @ResponseBody
+    public ProductCategory getProductCategoryById(@RequestBody ProductCategory productCategory){
+        return productService.getProductCategoryById(productCategory);
+    }
+
     //添加商品属性分类
     @RequestMapping(value = "add_product_attribute_category")
     @ResponseBody
-    public ResultData addProductAttributeCategory(HttpServletRequest request,
-                                                  ProductAttribute productAttribute){
+    public ResultData addProductAttributeCategory(
+            @RequestBody ProductAttribute productAttribute){
         return productService.addProductAttributeCategory(productAttribute);
     }
 
+    //更新商品属性分类
+    @RequestMapping(value = "update_product_attribute_category")
+    @ResponseBody
+    public ResultData updateProductAttributeCategory(
+            @RequestBody ProductAttribute productAttribute){
+        return productService.updateProductAttributeCategory(productAttribute);
+    }
+
     //获取商品属性列表
-    @RequestMapping(value = "/product_attribute")
+    @RequestMapping(value = "product_attribute")
     @ResponseBody
     public PaginationResultData<ProductAttribute> getProductAttribute(
             @RequestBody PaginationRequestParam param){
         return productService.selectProductAttribute(param);
-    }
-
-    //添加商品时获取商品规格属性和参数属性
-    @RequestMapping(value = "get_product_attribute")
-    @ResponseBody
-    public Object getProductAttributeByCategoryId(HttpServletRequest request,
-                                                ProductAttribute productAttribute){
-        List<ProductAttribute> list = productDao.selectProductAttributeByCategoryId(productAttribute);
-        List<String> attributeList = new ArrayList<String>();
-        List<String> attributeIdList = new ArrayList<String>();
-        List<String> inputList = new ArrayList<String>();
-        List<String> inputStatus = new ArrayList<String>();
-        for(ProductAttribute p : list){
-            attributeIdList.add(p.getId().toString());
-            attributeList.add(p.getAttributeName());
-            inputList.add(p.getInputList());
-            inputStatus.add(p.getInputStatus().toString());
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("attributeList", attributeList);
-        map.put("attributeIdList", attributeIdList);
-        map.put("inputList", inputList);
-        map.put("inputStatus", inputStatus);
-        return map;
-
     }
 
     //添加商品属性
@@ -143,6 +147,14 @@ public class AdminController {
     @ResponseBody
     public ResultData addProductAttribute(@RequestBody ProductAttribute productAttribute){
         return productService.addProductAttribute(productAttribute);
+    }
+
+    //根据ID查找商品属性
+    @RequestMapping(value = "get_product_attribute_by_id")
+    @ResponseBody
+    public ProductAttribute getProductAttributeById(
+            @RequestBody ProductAttribute productAttribute){
+        return productService.getProductAttributeById(productAttribute);
     }
 
     //更新商品属性
@@ -153,10 +165,10 @@ public class AdminController {
     }
 
     //删除商品分类
-    @RequestMapping(value = "delete_product_category")
+    @RequestMapping(value = "delete_product_category/{categoryId}")
     @ResponseBody
-    public ResultData deleteProductCategory(@RequestBody Product product){
-        return productService.deleteProductCategory(product.getCategoryId());
+    public ResultData deleteProductCategory(@PathVariable Integer categoryId){
+        return productService.deleteProductCategory(categoryId);
     }
 
     //删除商品
@@ -169,15 +181,15 @@ public class AdminController {
     //删除商品属性分类
     @RequestMapping(value = "delete_product_attribute_category")
     @ResponseBody
-    public ResultData deleteProductAttributeCategory(@RequestBody Product product){
-        return productService.deleteProductAttributeCategory(product.getCategoryId());
+    public ResultData deleteProductAttributeCategory(@RequestBody ProductAttribute productAttribute){
+        return productService.deleteProductAttributeCategory(productAttribute.getCategoryId());
     }
 
     //删除商品属性
     @RequestMapping(value = "delete_product_attribute")
     @ResponseBody
-    public ResultData deleteProductAttribute(@RequestBody Product product){
-        return productService.deleteProductAttribute(product.getId());
+    public ResultData deleteProductAttribute(@RequestBody ProductAttribute productAttribute){
+        return productService.deleteProductAttribute(productAttribute);
     }
 
     //查询所有商品父分类和其子类
@@ -211,6 +223,7 @@ public class AdminController {
 
         ResultData resultData = new ResultData();
         resultData.setData(map);
+        resultData.setCode(1);
         return resultData;
     }
 

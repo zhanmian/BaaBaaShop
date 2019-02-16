@@ -9,11 +9,9 @@ public class Product {
     private Integer sold;
     private String picture;
     private String createTime;
-    private Integer categoryId;
     private String categoryName;
-    private Integer categoryLevel;
-    private String skuList;
-    private Integer attributeCategoryId;
+    private Integer productCategoryId;
+    private Integer productAttributeCategoryId;
 
     public Integer getId() {
         return id;
@@ -63,20 +61,20 @@ public class Product {
         this.sold = sold;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     public String getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
 
     public String getCategoryName() {
@@ -87,35 +85,19 @@ public class Product {
         this.categoryName = categoryName;
     }
 
-    public Integer getCategoryLevel() {
-        return categoryLevel;
+    public Integer getProductCategoryId() {
+        return productCategoryId;
     }
 
-    public void setCategoryLevel(Integer categoryLevel) {
-        this.categoryLevel = categoryLevel;
+    public void setProductCategoryId(Integer productCategoryId) {
+        this.productCategoryId = productCategoryId;
     }
 
-    public String getSkuList() {
-        return skuList;
+    public Integer getProductAttributeCategoryId() {
+        return productAttributeCategoryId;
     }
 
-    public void setSkuList(String skuList) {
-        this.skuList = skuList;
-    }
-
-    public Integer getAttributeCategoryId() {
-        return attributeCategoryId;
-    }
-
-    public void setAttributeCategoryId(Integer attributeCategoryId) {
-        this.attributeCategoryId = attributeCategoryId;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setProductAttributeCategoryId(Integer productAttributeCategoryId) {
+        this.productAttributeCategoryId = productAttributeCategoryId;
     }
 }

@@ -19,20 +19,24 @@ public interface ProductDao {
     List<ProductAttribute> selectProductAttributeByCategoryId(ProductAttribute productAttribute);
     Integer selectProductTotalRecord();
     Integer selectProductCategoryTotalRecord();
+    ProductCategory selectProductCategoryById(ProductCategory productCategory);
     Integer selectProductAttributeCategoryTotalRecord();
-    Integer selectProductAttributeCategoryAttributeCount(@Param("categoryId") Integer categoryId);
-    Integer selectProductAttributeCategoryParamCount(@Param("categoryId") Integer categoryId);
     Integer selectProductAttributeTotalRecord(PaginationRequestParam param);
     ProductAttribute selectProductAttributeById(ProductAttribute productAttribute);
-    void updateProductAttributeCategoryAttributeCount(ProductAttribute productAttribute);
-    void updateProductAttributeCategoryParamCount(ProductAttribute productAttribute);
+    ProductAttribute selectProductAttributeCategoryById(@Param("id") Integer categoryId);
+
+    void updateProductCategory(ProductCategory productCategory);
+    void updateProductAttributeCategory(ProductAttribute productAttribute);
     void updateProductAttribute(ProductAttribute productAttribute);
-    void addProductCategory(Product product);
+    void addProductCategory(ProductCategory productCategory);
     void addProductAttributeCategory(ProductAttribute productAttribute);
     void addProductAttribute(ProductAttribute productAttribute);
-    void addProduct(Product product);
+    void addProduct(ProductParam productParam);
+    void updateProduct(ProductParam productParam);
     void addProductSku(ProductSku productSku);
+    void updateProductSku(ProductSku productSku);
     void addAttributeValue(ProductAttribute productAttribute);
+    void updateAttributeValue(ProductAttribute productAttribute);
 
     //删除商品分类
     void deleteProductCategory(@Param("id") Integer categoryId);
@@ -56,7 +60,7 @@ public interface ProductDao {
     void deleteProductAttributeByCategoryId(@Param("id") Integer categoryId);
 
     //单独删除商品属性
-    void deleteProductAttribute(@Param("id") Integer attributeId);
+    void deleteProductAttribute(ProductAttribute productAttribute);
 
     //查找商品分类及子分类
     List<ProductCategoryWithChildrenItem> selectProductCategoryWithChildren();
