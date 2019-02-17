@@ -12,6 +12,7 @@ public class PaginationResultData<T> extends ResultData implements Serializable 
 
     private Integer totalPage = 0;
     private Integer totalRecord = 0;
+
     //new一个对象以确保不是null
     List<T> list = new ArrayList<>();
 

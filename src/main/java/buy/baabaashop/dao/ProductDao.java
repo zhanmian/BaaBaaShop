@@ -38,6 +38,7 @@ public interface ProductDao {
     void addAttributeValue(ProductAttribute productAttribute);
     void updateAttributeValue(ProductAttribute productAttribute);
 
+    //根据ID查找商品详情
     ProductParam selectProductDetail(@Param("id") Integer id);
 
     //删除商品分类

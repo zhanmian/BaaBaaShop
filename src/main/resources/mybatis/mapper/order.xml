@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="buy.baabaashop.dao.OrderDao">
+
+    <select id="selectOrder" resultType="buy.baabaashop.entity.OrderResult">
+        select order_code, total_amount, o.create_time, pay_type, status, c.username
+        from order_details o
+        left join customer c on c.id=o.customer_id
+        limit #{from}, #{pageSize}
+    </select>
+
+    <select id="selectOrderTotalRecord" resultType="Integer">
+        select count(*) from order_details
+    </select>
+
+
+</mapper>

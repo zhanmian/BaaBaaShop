@@ -6,16 +6,11 @@ import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.ProductDao;
 import buy.baabaashop.entity.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
-import static buy.baabaashop.controller.CustomerController.getRequestBodyAsString;
 
 @Service
 public class ProductServiceImp implements ProductService {
