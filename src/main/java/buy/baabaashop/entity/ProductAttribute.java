@@ -8,6 +8,7 @@ public class ProductAttribute {
     private String createTime;
     private Integer categoryId;
     private Integer productId;
+    private Integer attributeId;
     private String attributeName;
     //录入方式，0手动录入，1从列表加载
     private Integer inputStatus;
@@ -74,6 +75,14 @@ public class ProductAttribute {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public Integer getAttributeId() {
+        return attributeId;
+    }
+
+    public void setAttributeId(Integer attributeId) {
+        this.attributeId = attributeId;
     }
 
     public String getAttributeName() {

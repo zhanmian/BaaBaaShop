@@ -295,15 +295,15 @@
         <if test="productName!=null">product_name=#{productName},</if>
         <if test="productCode!=null">product_code=#{productCode},</if>
         <if test="productPrice!=null">product_price=#{productPrice},</if>
-        <if test="productCategoryId!=null">product_categroy_id=#{productCategoryId},</if>
-        <if test="productAttributeCategoryId!=null">product_attribute_categoryId=#{productAttributeCategoryId},</if>
+        <if test="productCategoryId!=null">product_category_id=#{productCategoryId},</if>
+        <if test="productAttributeCategoryId!=null">product_attribute_category_id=#{productAttributeCategoryId},</if>
         <if test="description!=null">description=#{description},</if>
         <if test="picture!=null">picture=#{picture}</if>
         where
         <if test="id!=null">id=#{id}</if>
     </update>
 
-    <update id="updateProductSku" parameterType="buy.baabaashop.entity.ProductParam">
+    <update id="updateProductSku" parameterType="buy.baabaashop.entity.ProductSku">
         update sku set
         <if test="productId!=null">product_id=#{productId},</if>
         <if test="skuCode!=null">sku_code=#{skuCode},</if>
@@ -311,18 +311,62 @@
         <if test="skuStock!=null">sku_stock=#{skuStock},</if>
         <if test="spec1!=null">spec1=#{spec1},</if>
         <if test="spec2!=null">spec2=#{spec2},</if>
-        <if test="spec3!=null">spec3=#{spec3}</if>
+        spec3=#{spec3}
         where
         <if test="id!=null">id=#{id}</if>
     </update>
 
-    <update id="updateAttributeValue" parameterType="buy.baabaashop.entity.ProductParam">
+    <update id="updateAttributeValue" parameterType="buy.baabaashop.entity.ProductAttribute">
         update product_attribute_value set
-        <if test="productId!=null">product_id=#{productId},</if>
         <if test="attributeId!=null">attribute_id=#{attributeId},</if>
         <if test="value!=null">value=#{value}</if>
         where
         <if test="id!=null">id=#{id}</if>
     </update>
+
+    <select id="selectProductDetail" resultMap="product_detail">
+        select pc.parent_id, p.id, p.product_code, p.product_category_id, p.product_name, p.product_price,
+        p.product_attribute_category_id,p.description, p.picture,
+        s.id sku_id, s.product_id sku_product_id,
+        s.sku_code sku_sku_code, s.sku_price sku_sku_price, s.sku_stock sku_sku_stock,
+        s.spec1 sku_spec1, s.spec2 sku_spec2, s.spec3 sku_spec3,
+        a.value attribute_attribute_value, a.attribute_id attribute_attribute_id,
+        a.id attribute_id
+        from product p
+        left join sku s on s.product_id=p.id
+        left join product_attribute_value a on a.product_id=p.id
+        left join product_category pc on pc.id=p.product_category_id
+        where p.id=#{id}
+    </select>
+
+    <resultMap id="product_detail" type="buy.baabaashop.entity.ProductParam">
+        <result property="productCategoryParentId" column="parent_id"></result>
+        <result property="id" column="id"></result>
+        <result property="productCode" column="product_code"></result>
+        <result property="productPrice" column="product_price"></result>
+        <result property="description" column="description"></result>
+        <result property="productCategoryId" column="product_category_id"></result>
+        <result property="productName" column="product_name"></result>
+        <result property="picture" column="picture"></result>
+        <result property="productAttributeCategoryId" column="product_attribute_category_id"></result>
+        <collection property="skuStockList" columnPrefix="sku_" resultMap="sku"></collection>
+        <collection property="productAttributeValueList" columnPrefix="attribute_" resultMap="attribute_value"></collection>
+    </resultMap>
+
+    <resultMap id="sku" type="buy.baabaashop.entity.ProductSku">
+        <result property="id" column="id"></result>
+        <result property="productId" column="product_id"></result>
+        <result property="skuCode" column="sku_code"></result>
+        <result property="skuPrice" column="sku_price"></result>
+        <result property="skuStock" column="sku_stock"></result>
+        <result property="spec1" column="spec1"></result>
+        <result property="spec2" column="spec2"></result>
+        <result property="spec3" column="spec3"></result>
+    </resultMap>
+    <resultMap id="attribute_value" type="buy.baabaashop.entity.ProductAttribute">
+        <result property="value" column="attribute_value"></result>
+        <result property="attributeId" column="attribute_id"></result>
+        <result property="id" column="id"></result>
+    </resultMap>
 
 </mapper>

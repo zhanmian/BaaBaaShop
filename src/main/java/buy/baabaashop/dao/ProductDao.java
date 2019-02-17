@@ -38,6 +38,8 @@ public interface ProductDao {
     void addAttributeValue(ProductAttribute productAttribute);
     void updateAttributeValue(ProductAttribute productAttribute);
 
+    ProductParam selectProductDetail(@Param("id") Integer id);
+
     //删除商品分类
     void deleteProductCategory(@Param("id") Integer categoryId);
 

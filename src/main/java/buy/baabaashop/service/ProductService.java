@@ -38,6 +38,8 @@ public interface ProductService {
 
     ResultData updateProduct(ProductParam productParam);
 
+    ProductParam getProductDetail(Integer id);
+
     Object getSkuDetails(Integer productId);
 
     ResultData deleteProductCategory(Integer categoryId);

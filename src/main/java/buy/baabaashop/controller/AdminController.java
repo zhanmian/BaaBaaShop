@@ -57,6 +57,13 @@ public class AdminController {
         return productService.addProduct(productParam);
     }
 
+    //根据ID获取商品详情
+    @RequestMapping(value = "get_product_detail/{id}")
+    @ResponseBody
+    public ProductParam getProductDetail(@PathVariable Integer id){
+        return productService.getProductDetail(id);
+    }
+
     //更新商品
     @RequestMapping(value = "update_product")
     @ResponseBody

@@ -4,9 +4,19 @@ import java.util.List;
 
 public class ProductParam extends Product{
 
+    private Integer productCategoryParentId;
+
     private List<ProductSku> skuStockList;
 
     private List<ProductAttribute> productAttributeValueList;
+
+    public Integer getProductCategoryParentId() {
+        return productCategoryParentId;
+    }
+
+    public void setProductCategoryParentId(Integer productCategoryParentId) {
+        this.productCategoryParentId = productCategoryParentId;
+    }
 
     public List<ProductSku> getSkuStockList() {
         return skuStockList;

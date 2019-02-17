@@ -234,6 +234,11 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
+    public ProductParam getProductDetail(Integer id){
+        return productDao.selectProductDetail(id);
+    }
+
+    @Override
     @Transactional
     public ResultData updateProduct(ProductParam productParam){
         ResultData resultData = new ResultData();
@@ -243,7 +248,6 @@ public class ProductServiceImp implements ProductService {
             List<ProductSku> skuStockList = productParam.getSkuStockList();
             if(skuStockList != null && skuStockList.size() > 0){
                 for(ProductSku productSku : skuStockList){
-                    productSku.setProductId(productParam.getId());
                     productDao.updateProductSku(productSku);
                 }
             }
@@ -251,7 +255,6 @@ public class ProductServiceImp implements ProductService {
             List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
             if(productAttributeValueList != null && productAttributeValueList.size() > 0){
                 for(ProductAttribute productAttribute : productAttributeValueList){
-                    productAttribute.setProductId(productParam.getId());
                     productDao.updateAttributeValue(productAttribute);
                 }
             }
