@@ -29,11 +29,11 @@
                     <#--<form method="POST" class="register-form" id="login-form">-->
                         <div class="form-group">
                             <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="your_name" id="username" placeholder="用户名"/>
+                            <input type="text" name="your_name" id="username" value="zhanmian" placeholder="用户名"/>
                         </div>
                         <div class="form-group">
                             <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="your_pass" id="password" placeholder="密码"/>
+                            <input type="password" name="your_pass" id="password" value="123456" placeholder="密码"/>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />

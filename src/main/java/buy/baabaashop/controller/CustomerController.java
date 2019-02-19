@@ -4,7 +4,7 @@ import buy.baabaashop.common.ResultData;
 import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
-import buy.baabaashop.service.CustomerServiceImp;
+import buy.baabaashop.service.CustomerService;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
@@ -37,10 +37,11 @@ public class CustomerController {
     @ModelAttribute
     public void populateModel(Model model) {
         model.addAttribute("baseUrl", baseUrl);
+        model.addAttribute("productCategoryList", customerService.getAllProductCategory());
     }
 
     @Resource
-    private CustomerServiceImp customerServiceImp;
+    private CustomerService customerService;
 
     @Resource
     private CustomerDao customerDao;
@@ -53,7 +54,7 @@ public class CustomerController {
     @RequestMapping(value = "/register")
     @ResponseBody
     public ResultData register(HttpServletRequest request, Customer customer) {
-        return customerServiceImp.register(customer);
+        return customerService.register(customer);
     }
 
     @RequestMapping(value = "/to_login")
@@ -64,7 +65,7 @@ public class CustomerController {
     @RequestMapping(value = "/login")
     @ResponseBody
     public ResultData login(HttpServletRequest request, HttpServletResponse response, Customer customer) {
-        return customerServiceImp.login(request, response, customer);
+        return customerService.login(request, response, customer);
     }
 
     @RequestMapping(value = "/home")
@@ -76,7 +77,7 @@ public class CustomerController {
     public String toProductDetails(HttpServletRequest request, Product product, Model model) {
         product.setId(1);
         model.addAttribute("product", customerDao.selectProductDetails(product));
-        String attributeList = customerServiceImp.selectProductAttribute(product);
+        String attributeList = customerService.selectProductAttribute(product);
         model.addAttribute("attributeList", attributeList);
         model.addAttribute("productId", product.getId());
         return "online_shop/client/product_details";
@@ -93,12 +94,12 @@ public class CustomerController {
     @ResponseBody
     public ResultData addCart(HttpServletRequest request, CartItem cartItem,
                               HttpServletResponse response) {
-        return customerServiceImp.addCartItem(request, response, cartItem);
+        return customerService.addCartItem(request, response, cartItem);
     }
 
     @RequestMapping(value = "/cart")
     public String toCart(HttpServletRequest request, Model model) throws IOException {
-        return customerServiceImp.toCart(request, model);
+        return customerService.toCart(request, model);
     }
 
     @RequestMapping(value = "/check_stock")
@@ -112,18 +113,18 @@ public class CustomerController {
     public ResultData updateQuantity(HttpServletRequest request,
                                      HttpServletResponse response,
                                      CartItem cartItem) throws IOException {
-        return customerServiceImp.updateQuantity(request, response, cartItem);
+        return customerService.updateQuantity(request, response, cartItem);
     }
 
     @RequestMapping(value = "checkout")
     public String toCheckout(HttpServletRequest request, Model model) {
-        return customerServiceImp.checkOut(request, model);
+        return customerService.checkOut(request, model);
     }
 
     @RequestMapping(value = "generate_order")
     public String generateOrder(HttpServletRequest request, Order orderParam,
                                 HttpServletResponse response, RedirectAttributes attributes) {
-        return customerServiceImp.generateOrder(request, response, orderParam, attributes);
+        return customerService.generateOrder(request, response, orderParam, attributes);
     }
 
     @RequestMapping(value = "alipay")

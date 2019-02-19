@@ -5,16 +5,58 @@
 
 <mapper namespace="buy.baabaashop.dao.OrderDao">
 
-    <select id="selectOrder" resultType="buy.baabaashop.entity.OrderResult">
-        select order_code, total_amount, o.create_time, pay_type, status, c.username
-        from order_details o
+    <select id="selectOrderList" resultType="buy.baabaashop.entity.OrderResult">
+        select o.id, order_code, total_amount, o.create_time, pay_type, status, c.username
+        from order_detail o
         left join customer c on c.id=o.customer_id
+        where o.delete_status not in ('1')
         limit #{from}, #{pageSize}
     </select>
 
     <select id="selectOrderTotalRecord" resultType="Integer">
-        select count(*) from order_details
+        select count(*) from order_detail where delete_status not in ('1')
     </select>
 
+    <select id="selectOrderDetail" resultMap="order_detail">
+        select username, o.*,
+        oi.product_name item_product_name, oi.product_code item_product_code,
+        oi.product_picture item_product_picture, oi.product_price item_product_price,
+        oi.sku_id item_sku_id, oi.sku_code item_sku_code, oi.sku_price item_sku_price,
+        oi.spec1 item_spec1, oi.spec2 item_spec2, oi.spec3 item_spec3, oi.quantity item_quantity,
+        oi.product_attribute item_product_attribute
+        from order_detail o
+        left join order_item oi on o.id=oi.order_id
+        left join customer c on o.customer_id=c.id
+        where o.id=#{id}
+    </select>
+
+    <resultMap id="order_detail" type="buy.baabaashop.entity.OrderDetailResult">
+        <result property="username" column="username"></result>
+        <result property="orderCode" column="order_code"></result>
+        <result property="totalAmount" column="total_amount"></result>
+        <result property="freight" column="freight"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="payType" column="pay_type"></result>
+        <result property="paymentTime" column="payment_time"></result>
+        <result property="status" column="status"></result>
+        <collection columnPrefix="item_"  property="orderItemList" resultMap="order_item"></collection>
+    </resultMap>
+
+    <resultMap id="order_item" type="buy.baabaashop.entity.OrderItem">
+        <result property="productName" column="product_name"></result>
+        <result property="productPrice" column="product_price"></result>
+        <result property="productCode" column="product_code"></result>
+        <result property="picture" column="product_picture"></result>
+        <result property="quantity" column="quantity"></result>
+        <result property="skuPrice" column="sku_price"></result>
+        <result property="spec1" column="spec1"></result>
+        <result property="spec2" column="spec2"></result>
+        <result property="spec3" column="spec3"></result>
+        <result property="productAttribute" column="product_attribute"></result>
+    </resultMap>
+
+    <update id="deleteOrder" parameterType="Integer">
+        update order_detail set delete_status=1 where id=#{id}
+    </update>
 
 </mapper>

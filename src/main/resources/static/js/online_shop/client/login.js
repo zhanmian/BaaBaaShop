@@ -17,9 +17,10 @@ function login(){
             data : param,
             url : baseUrl + '/baabaa/login',
             success : function(response){
-                alert(response.message);
                 if(response.code == 1){
                     window.location.href = baseUrl + '/baabaa/home';
+                }else{
+                    alert(response.message);
                 }
             }
         })

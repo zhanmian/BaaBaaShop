@@ -2,12 +2,8 @@ package buy.baabaashop.service;
 
 import buy.baabaashop.common.CommonException;
 import buy.baabaashop.common.ResultData;
-import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
-import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -81,6 +77,11 @@ public class CustomerServiceImp implements CustomerService {
             resultData.setCode(0);
         }
         return resultData;
+    }
+
+    @Override
+    public List<ProductCategory> getAllProductCategory(){
+        return customerDao.selectAllProductCategory();
     }
 
     @Override
@@ -257,7 +258,7 @@ public class CustomerServiceImp implements CustomerService {
             Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
             if(cart != null){
                 for(CartItem item : cart.getItems()){
-                    //如果商品数量小于等于库存就更新否则不能更新并提示
+                    //一旦商品数量大于库存就提示没有库存了
                     if(item.getSkuId().equals(cartItem.getSkuId()) && cartItem.getQuantity() <= skuStock){
                         item.setQuantity(cartItem.getQuantity());
                     }else{
@@ -285,7 +286,7 @@ public class CustomerServiceImp implements CustomerService {
             Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
             //要更新的数量
             Integer quantity = cartItem.getQuantity();
-            //如果要更新的数量小于等于库存就更新，否则就不能更新
+            //一旦商品数量大于库存就提示没有库存了
             if(dbItem.getSkuId().equals(cartItem.getSkuId()) && quantity <= skuStock){
                 dbItem.setQuantity(quantity);
                 customerDao.updateCartQuantity(dbItem);
@@ -353,8 +354,18 @@ public class CustomerServiceImp implements CustomerService {
                 orderItem.setOrderCode(order.getOrderCode());
                 orderItem.setOrderId(order.getId());
                 orderItem.setProductId(item.getProductId());
+                orderItem.setProductCode(item.getProductCode());
+                orderItem.setProductPrice(item.getProductPrice());
+                orderItem.setProductName(item.getProductName());
+                orderItem.setPicture(item.getProductPicture());
                 orderItem.setSkuId(item.getSkuId());
+                orderItem.setSkuCode(item.getSkuCode());
+                orderItem.setSkuPrice(item.getSkuPrice());
+                orderItem.setSpec1(item.getSpec1());
+                orderItem.setSpec2(item.getSpec2());
+                orderItem.setSpec3(item.getSpec3());
                 orderItem.setQuantity(item.getQuantity());
+                orderItem.setProductAttribute(item.getProductAttribute());
                 customerDao.insertOrderItem(orderItem);
                 //减库存
                 CartItem cartItem = customerDao.selectItemBySkuId(item);
@@ -374,6 +385,7 @@ public class CustomerServiceImp implements CustomerService {
 
         try{
             if(orderParam.getPayType() == 1){
+                //带参数重定向
                 attributes.addFlashAttribute(order);
                 return "redirect:/baabaa/alipay";
             }

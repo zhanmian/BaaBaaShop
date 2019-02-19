@@ -41,9 +41,6 @@ public class AdminController {
     @Resource
     public ProductService productService;
 
-    @Resource
-    public ProductDao productDao;
-
     @RequestMapping(value = "")
     public String home(){
         return "online_shop/index";

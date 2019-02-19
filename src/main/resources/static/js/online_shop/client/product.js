@@ -288,10 +288,35 @@ $(document).ready(function()
 });
 
 function addCart(){
+
+    var spec1 = $("input[type='radio'][name='radio0']:checked").val();
+    var spec2 = $("input[type='radio'][name='radio1']:checked").val();
+    var spec3 = $("input[type='radio'][name='radio2']:checked").val();
+
+    var attributeName1 = $("#attribute-name0").text();
+    var attributeName2 = $("#attribute-name1").text();
+    var attributeName3 = $("#attribute-name2").text();
+
+    var productAttribute = [];
     var param = {};
     param.productId = $('#product-id').val();
     param.skuId = $('#product-sku-id').val();
     param.quantity = $('#quantity_input').val();
+    if(spec3){
+        param.spec3 = spec3;
+        productAttribute.push(
+            {key: attributeName1, value: spec1},
+            {key: attributeName2, value: spec2},
+            {key: attributeName3, value: spec3}
+        );
+    }else{
+        productAttribute.push(
+            {key: attributeName1, value: spec1},
+            {key: attributeName2, value: spec2}
+        );
+	}
+	console.log(productAttribute);
+    param.productAttribute = JSON.stringify(productAttribute);
 
     $.ajax({
         type : 'post',
@@ -318,10 +343,11 @@ function buildRadio(){
 }
 
 function skuDetails(){
+    var productId = $('#product-id').val();
+
     var spec1 = $("input[type='radio'][name='radio0']:checked").val();
     var spec2 = $("input[type='radio'][name='radio1']:checked").val();
     var spec3 = $("input[type='radio'][name='radio2']:checked").val();
-    var productId = $('#product-id').val();
 
     //两个规格属性中只要有一个是空的就返回
     if(!spec3){

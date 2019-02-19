@@ -7,24 +7,20 @@
                         <div class="logo"><a href="${baseUrl}/baabaa/home">BaaBaa Shop.</a></div>
                         <nav class="main_nav">
                             <ul>
-                                <li class="hassubs active">
+                                <li>
                                     <a href="${baseUrl}/baabaa/home">首页</a>
-                                    <ul>
-                                        <li><a href="categories.html">Categories</a></li>
-                                        <li><a href="${baseUrl}/baabaa/product_details">Product</a></li>
-                                        <li><a href="cart.html">Cart</a></li>
-                                        <li><a href="checkout.html">Check out</a></li>
-                                        <li><a href="contact.html">Contact</a></li>
-                                    </ul>
                                 </li>
                                 <li class="hassubs">
                                     <a href="categories.html">分类</a>
                                     <ul>
-                                        <li><a href="categories.html">Category</a></li>
-                                        <li><a href="categories.html">Category</a></li>
-                                        <li><a href="categories.html">Category</a></li>
-                                        <li><a href="categories.html">Category</a></li>
-                                        <li><a href="categories.html">Category</a></li>
+                                        <#list productCategoryList as item>
+                                            <li>
+                                                <a href="${baseUrl}/baabaa/product_category?categoryId=${item.id!}">
+                                                    ${item.categoryName!}
+                                                </a>
+                                            </li>
+                                        </#list>
+                                        <li><a href="${baseUrl}/baabaa/product_details">Product</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="#">购物指南</a></li>
@@ -33,21 +29,6 @@
                             </ul>
                         </nav>
                         <div class="header_extra ml-auto">
-                            <#--<div class="search">-->
-                                <#--<div class="search_icon">-->
-                                    <#--<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"-->
-                                         <#--viewBox="0 0 475 475 style="enable-background:new 0 0 475 475;" xml:space="preserve">-->
-                                        <#--<g>-->
-                                            <#--<path d="M280.79,314.559c83.266,0,150.803-67.538,150.803-150.803S364.055,13.415,280.79,13.415S129.987,80.953,129.987,163.756-->
-                                        <#--S197.524,314.559,280.79,314.559z M280.79,52.735c61.061,0,111.021,49.959,111.021,111.021S341.851,274.776,280.79,274.776-->
-                                        <#--s-111.021-49.959-111.021-111.021S219.728,52.735,280.79,52.735z"/>-->
-                                            <#--<path d="M19.891,550.015h523.648c11.102,0,19.891-8.789,19.891-19.891c0-104.082-84.653-189.198-189.198-189.198H189.198-->
-                                        <#--C85.116,340.926,0,425.579,0,530.124C0,541.226,8.789,550.015,19.891,550.015z M189.198,380.708h185.034-->
-                                        <#--c75.864,0,138.313,56.436,148.028,129.524H41.17C50.884,437.607,113.334,380.708,189.198,380.708z"/>-->
-                                        <#--</g>-->
-                                    <#--</svg>-->
-                                <#--</div>-->
-                            <#--</div>-->
                             <div class="shopping_cart">
                                 <a href="${baseUrl}/baabaa/cart">
                                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -134,17 +115,10 @@
                 <ul class="page_menu_nav menu_mm">
                     <li class="page_menu_item has-children menu_mm">
                         <a href="${baseUrl}/baabaa/home">首页<i class="fa fa-angle-down"></i></a>
-                        <ul class="page_menu_selection menu_mm">
-                            <li class="page_menu_item menu_mm"><a href="categories.html">Categories<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="product.html">Product<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="cart.html">Cart<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="checkout.html">Checkout<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="contact.html">Contact<i class="fa fa-angle-down"></i></a></li>
-                        </ul>
                     </li>
                     <li class="page_menu_item has-children menu_mm">
                         <a href="categories.html">分类<i class="fa fa-angle-down"></i></a>
-                        <ul class="page_menu_selection menu_mm">
+                        <ul id="category" class="page_menu_selection menu_mm">
                             <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
                             <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
                             <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>

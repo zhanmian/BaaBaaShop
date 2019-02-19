@@ -4,7 +4,7 @@ public class ProductSku {
     private Integer id;
     private Integer productId;
     private String skuCode;
-    private Integer skuPrice;
+    private float skuPrice;
     private Integer skuStock;
     //商品规格属性
     private String spec1;
@@ -35,11 +35,11 @@ public class ProductSku {
         this.skuCode = skuCode;
     }
 
-    public Integer getSkuPrice() {
+    public float getSkuPrice() {
         return skuPrice;
     }
 
-    public void setSkuPrice(Integer skuPrice) {
+    public void setSkuPrice(float skuPrice) {
         this.skuPrice = skuPrice;
     }
 

@@ -24,6 +24,10 @@
         )
     </insert>
 
+    <select id="selectAllProductCategory" resultType="buy.baabaashop.entity.ProductCategory">
+        select * from product_category where parent_id=0
+    </select>
+
     <select id="selectProductDetails" resultType="buy.baabaashop.entity.Product">
         select id, product_code, product_price, product_name, description, picture
         from product where
@@ -67,7 +71,9 @@
     </select>
 
     <select id="selectCartByCustomerId" resultMap="cart">
-        select product_name, p.picture, sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity, c.id, c.product_id, c.sku_id
+        select p.product_name, p.product_code, p.product_price, p.picture,
+        sku_code, sku_price, sku_stock, spec1, spec2, spec3, quantity,
+        c.id, c.product_id, c.sku_id, c.product_attribute
         from product p, sku s, cart c
         where p.id=s.product_id and s.id=c.sku_id
         <if test="customerId!=null">and customer_id = #{customerId}</if>
@@ -98,13 +104,15 @@
         <if test="customerId!=null">customer_id,</if>
         <if test="productId!=null">product_id,</if>
         <if test="skuId!=null">sku_id,</if>
-        <if test="quantity!=null">quantity</if>
+        <if test="quantity!=null">quantity,</if>
+        <if test="productAttribute!=null">product_attribute</if>
         )
         values(
         <if test="customerId!=null">#{customerId},</if>
         <if test="productId!=null">#{productId},</if>
         <if test="skuId!=null">#{skuId},</if>
-        <if test="quantity!=null">#{quantity}</if>
+        <if test="quantity!=null">#{quantity},</if>
+        <if test="productAttribute!=null">#{productAttribute}</if>
         )
     </insert>
 
@@ -126,7 +134,7 @@
         <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
             SELECT LAST_INSERT_ID() as id
         </selectKey>
-        insert into order_details (
+        insert into order_detail (
         <if test="orderCode!=null">order_code,</if>
         <if test="customerId!=null">customer_id,</if>
         <if test="totalAmount!=null">total_amount,</if>
@@ -149,15 +157,35 @@
         <if test="orderId!=null">order_id,</if>
         <if test="orderCode!=null">order_code,</if>
         <if test="productId!=null">product_id,</if>
+        <if test="productCode!=null">product_code,</if>
+        <if test="productPrice!=null">product_price,</if>
+        <if test="productName!=null">product_name,</if>
+        <if test="picture!=null">product_picture,</if>
         <if test="skuId!=null">sku_id,</if>
-        <if test="quantity!=null">quantity</if>
+        <if test="skuCode!=null">sku_code,</if>
+        <if test="skuPrice!=null">sku_price,</if>
+        <if test="spec1!=null">spec1,</if>
+        <if test="spec2!=null">spec2,</if>
+        spec3,
+        <if test="quantity!=null">quantity,</if>
+        <if test="productAttribute!=null">product_attribute</if>
         )
         values(
         <if test="orderId!=null">#{orderId},</if>
         <if test="orderCode!=null">#{orderCode},</if>
         <if test="productId!=null">#{productId},</if>
+        <if test="productCode!=null">#{productCode},</if>
+        <if test="productPrice!=null">#{productPrice},</if>
+        <if test="productName!=null">#{productName},</if>
+        <if test="picture!=null">#{picture},</if>
         <if test="skuId!=null">#{skuId},</if>
-        <if test="quantity!=null">#{quantity}</if>
+        <if test="skuCode!=null">#{skuCode},</if>
+        <if test="skuPrice!=null">#{skuPrice},</if>
+        <if test="spec1!=null">#{spec1},</if>
+        <if test="spec2!=null">#{spec2},</if>
+        #{spec3},
+        <if test="quantity!=null">#{quantity},</if>
+        <if test="productAttribute!=null">#{productAttribute}</if>
         )
     </insert>
 

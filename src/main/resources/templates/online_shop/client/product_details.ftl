@@ -188,6 +188,7 @@
 <input type="hidden" id="product-id" value=${productId!}>
 <input type="hidden" id="attribute-list" value=${attributeList!}>
 <input type="hidden" id="product-sku-id">
+<#--<input type="hidden" id="product-attribute">-->
 
 <script src="/js/jquery.min.js"></script>
 <script src="/online_shop/styles/bootstrap4/popper.js"></script>
@@ -213,7 +214,7 @@
     <#--这样就实现了两个单选框的name是不相同的-->
     {{set temp = index}}
     <div>
-        <div class="availability">{{value.name}}：
+        <div class="availability"><span id="attribute-name{{temp}}">{{value.name}}</span>：
             {{each value.value value index}}
             <label class="payment_option clearfix">
                 <input type="radio" name="radio{{temp}}" value="{{value}}" onclick="skuDetails()">

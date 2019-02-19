@@ -5,7 +5,9 @@ public class CartItem {
     private Integer id;
     private Integer CustomerId;
     private Integer productId;
+    private String productCode;
     private String productName;
+    private float productPrice;
     private String productPicture;
     private Integer skuId;
     private String skuCode;
@@ -19,6 +21,7 @@ public class CartItem {
     private Integer quantity;
     private String createTime;
     private float itemTotalPrice;
+    private String productAttribute;
 
     public Integer getId() {
         return id;
@@ -44,12 +47,28 @@ public class CartItem {
         this.productId = productId;
     }
 
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
+
     public String getProductName() {
         return productName;
     }
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public float getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(float productPrice) {
+        this.productPrice = productPrice;
     }
 
     public String getProductPicture() {
@@ -138,6 +157,14 @@ public class CartItem {
 
     public void setItemTotalPrice(float itemTotalPrice) {
         this.itemTotalPrice = itemTotalPrice;
+    }
+
+    public String getProductAttribute() {
+        return productAttribute;
+    }
+
+    public void setProductAttribute(String productAttribute) {
+        this.productAttribute = productAttribute;
     }
 
     //    @Override
