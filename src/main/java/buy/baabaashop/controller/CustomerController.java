@@ -1,5 +1,7 @@
 package buy.baabaashop.controller;
 
+import buy.baabaashop.common.PaginationRequestParam;
+import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
@@ -69,13 +71,23 @@ public class CustomerController {
     }
 
     @RequestMapping(value = "/home")
-    public String toHome() {
+    public String toHome(Model model) {
+        //首页推荐商品列表
+        model.addAttribute("recommendProducts", customerService.selectRecommendProduct());
         return "online_shop/client/home";
+    }
+
+    @RequestMapping(value = "/product_category")
+    public String toProductCategory(HttpServletRequest request, PaginationRequestParam param,
+                                    Model model) {
+        PaginationResultData<Product> resultData = customerService.getProductByCategory(param);
+        model.addAttribute("productList", resultData);
+        model.addAttribute("categoryId", param.getCategoryId());
+        return "online_shop/client/category";
     }
 
     @RequestMapping(value = "/product_details")
     public String toProductDetails(HttpServletRequest request, Product product, Model model) {
-        product.setId(1);
         model.addAttribute("product", customerDao.selectProductDetails(product));
         String attributeList = customerService.selectProductAttribute(product);
         model.addAttribute("attributeList", attributeList);
@@ -125,6 +137,11 @@ public class CustomerController {
     public String generateOrder(HttpServletRequest request, Order orderParam,
                                 HttpServletResponse response, RedirectAttributes attributes) {
         return customerService.generateOrder(request, response, orderParam, attributes);
+    }
+
+    @RequestMapping(value = "contact")
+    public String toContact() {
+        return "online_shop/client/contact";
     }
 
     @RequestMapping(value = "alipay")

@@ -235,19 +235,36 @@
 {
 	.home_slider_content
 	{
+		top: 45%;
 		max-width: 100%;
 	}
 	.home_slider_container
 	{
 		padding-left: 0px;
 		padding-right: 0px;
+        padding-bottom: 70px;
 	}
 	.home_slider_dots_container
 	{
 		display: none;
 	}
+    .button
+    {
+        width: 148px;
+        height: 41px;
+    }
+    .button a
+    {
+        font-size: 13px;
+        line-height: 37px;
+    }
+    .home_button
+    {
+        margin-top: 20px;
+    }
 	.avds_xl_container
 	{
+
 		padding: 30px;
 	}
 	.avds_xl_content
@@ -304,10 +321,10 @@
 	}
 	.home_slider_container
 	{
-		padding-left: 0px;
-		padding-right: 0px;
+		padding-left: 15px;
+		padding-right: 15px;
 		padding-top: 0;
-		padding-bottom: 0;
+        padding-bottom: 50px;
 	}
 	.home_slider_title
 	{

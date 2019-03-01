@@ -210,10 +210,10 @@ $(document).ready(function()
                             dom.val(quantity);
                             var price = $('#' + skuId).find('span[class*=price]').text();
                             $('#' + skuId).find('span[class*=item-total]').html(price * quantity);
+                            setTotal();
                         }
                     }
                 });
-                setTotal();
             });
 
             decButton.on('click', function () {
@@ -246,6 +246,7 @@ $(document).ready(function()
             });
         }
     }
+    setTotal();
 });
 
 function setTotal() {
@@ -254,4 +255,6 @@ function setTotal() {
         sum += parseInt($(this).text());
     });
     $("#total-price").html(sum);
+    var freight = parseInt($('#freight').text());
+    $('#total-amount').html(sum+freight);
 }

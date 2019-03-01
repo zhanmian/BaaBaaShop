@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>首页 - BaaBaa Shop</title>
+    <title>分类-${productList.list[0].categoryName!} | BaaBaa Shop.</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Sublime project">
@@ -11,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="/online_shop/plugins/OwlCarousel2-2.2.1/owl.carousel.css">
     <link rel="stylesheet" type="text/css" href="/online_shop/plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
     <link rel="stylesheet" type="text/css" href="/online_shop/plugins/OwlCarousel2-2.2.1/animate.css">
-    <link rel="stylesheet" type="text/css" href="/online_shop/styles/main_styles.css">
-    <link rel="stylesheet" type="text/css" href="/online_shop/styles/responsive.css">
+    <link rel="stylesheet" type="text/css" href="/online_shop/styles/categories.css">
+    <link rel="stylesheet" type="text/css" href="/online_shop/styles/categories_responsive.css">
 </head>
 <body>
 
@@ -25,81 +25,17 @@
     <!-- Home -->
 
     <div class="home">
-        <div class="home_slider_container">
-
-            <!-- Home Slider -->
-            <div class="owl-carousel owl-theme home_slider">
-
-                <!-- Slider Item -->
-                <div class="owl-item home_slider_item">
-                    <div class="home_slider_background" style="background-image:url(/online_shop/images/banner.jpg)"></div>
-                    <div class="home_slider_content_container">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="home_slider_content"  data-animation-in="fadeIn" data-animation-out="animate-out fadeOut">
-                                        <div class="home_slider_title">极简主义</div>
-                                        <div class="home_slider_subtitle">简单、舒适、与你契合</div>
-                                        <div class="button button_light home_button"><a href="#">立即开启</a></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Home Slider Dots -->
-
-            <div class="home_slider_dots_container">
+        <div class="home_container">
+            <div class="home_background" style="background-image:url(/online_shop/images/banner.jpg)"></div>
+            <div class="home_content_container">
                 <div class="container">
                     <div class="row">
                         <div class="col">
-                            <div class="home_slider_dots">
-                                <ul id="home_slider_custom_dots" class="home_slider_custom_dots">
-                                    <li class="home_slider_custom_dot active">01.</li>
-                                    <li class="home_slider_custom_dot">02.</li>
-                                    <li class="home_slider_custom_dot">03.</li>
-                                </ul>
+                            <div class="home_content">
+                                <div class="home_title">${productList.list[0].categoryName!}<span>.</span></div>
+                                <#--<div class="home_text"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus. Sed nec molestie eros. Sed viverra velit venenatis fermentum luctus.</p></div>-->
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Ads -->
-
-    <div class="avds">
-        <div class="avds_container d-flex flex-lg-row flex-column align-items-start justify-content-between">
-            <div class="avds_small">
-                <div class="avds_background" style="background-image:url(/online_shop/images/t-shirt2.jpg)"></div>
-                <div class="avds_small_inner">
-                    <div class="avds_discount_container">
-                        <img src="/online_shop/images/discount.png" alt="">
-                        <div>
-                            <div class="avds_discount">
-                                <div>20<span>%</span></div>
-                                <div>Discount</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="avds_small_content">
-                        <div class="avds_title">新品</div>
-                        <div class="avds_link"><a href="categories.html">查看更多</a></div>
-                    </div>
-                </div>
-            </div>
-            <div class="avds_large">
-                <div class="avds_background" style="background-image:url(/online_shop/images/clothes-store.jpg)"></div>
-                <div class="avds_large_container">
-                    <div class="avds_large_content">
-                        <div class="avds_title">了解我们</div>
-                        <div class="avds_text">没有一件服饰的设计存在多余</div>
-                        <div class="avds_link avds_link_large"><a href="contact.html">查看更多</a></div>
                     </div>
                 </div>
             </div>
@@ -113,10 +49,34 @@
             <div class="row">
                 <div class="col">
 
+                    <!-- Product Sorting -->
+                    <div class="sorting_bar d-flex flex-md-row flex-column align-items-md-center justify-content-md-start">
+                        <div class="results">一共有 <span>${productList.totalRecord!}</span> 件商品</div>
+                        <div class="sorting_container ml-md-auto">
+                            <div class="sorting">
+                                <ul class="item_sorting">
+                                    <li>
+                                        <span class="sorting_text">排序</span>
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                        <ul>
+                                            <li class="product_sorting_btn" data-isotope-option='{ "sortBy": "original-order" }'><span>默认</span></li>
+                                            <li class="product_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span>价格</span></li>
+                                            <li class="product_sorting_btn" data-isotope-option='{ "sortBy": "stars" }'><span>名称</span></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+
                     <div class="product_grid">
 
                         <!-- Product -->
-                        <#list recommendProducts as item>
+                        <#list productList.list as item>
                             <div class="product">
                                 <div class="product_image">
                                     <a href="${baseUrl}/baabaa/product_details?id=${item.id!}">
@@ -126,40 +86,24 @@
                                 <div class="product_extra product_new"><a href="categories.html">New</a></div>
                                 <div class="product_content">
                                     <div class="product_title">
-                                        <a href="${baseUrl}/baabaa/product_details?id=${item.id!}">
-                                            ${item.productName!}
-                                        </a>
+                                        <a href="${baseUrl}/baabaa/product_details?id=${item.id!}">${item.productName!}</a>
                                     </div>
                                     <div class="product_price">￥${item.productPrice!}</div>
                                 </div>
                             </div>
                         </#list>
 
+
+                    </div>
+                    <div class="product_pagination">
+                        <ul id="pagination">
+                        </ul>
                     </div>
 
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Ad -->
-
-    <#--<div class="avds_xl">-->
-        <#--<div class="container">-->
-            <#--<div class="row">-->
-                <#--<div class="col">-->
-                    <#--<div class="avds_xl_container clearfix">-->
-                        <#--<div class="avds_xl_background" style="background-image:url(/online_shop/images/avds_xl.jpg)"></div>-->
-                        <#--<div class="avds_xl_content">-->
-                            <#--<div class="avds_title">Amazing Devices</div>-->
-                            <#--<div class="avds_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus.</div>-->
-                            <#--<div class="avds_link avds_xl_link"><a href="categories.html">See More</a></div>-->
-                        <#--</div>-->
-                    <#--</div>-->
-                <#--</div>-->
-            <#--</div>-->
-        <#--</div>-->
-    <#--</div>-->
 
     <!-- Icon Boxes -->
 
@@ -218,12 +162,6 @@
                     <div class="newsletter_content text-center">
                         <div class="newsletter_title">订阅</div>
                         <div class="newsletter_text"><p>欢迎订阅微信公众号 / 微博：baabaashop</p></div>
-                        <#--<div class="newsletter_form_container">-->
-                            <#--<form action="#" id="newsletter_form" class="newsletter_form">-->
-                                <#--<input type="email" class="newsletter_input" required="required">-->
-                                <#--<button class="newsletter_button trans_200"><span>Subscribe</span></button>-->
-                            <#--</form>-->
-                        <#--</div>-->
                     </div>
                 </div>
             </div>
@@ -233,6 +171,7 @@
     <!-- Footer -->
     <#include "/online_shop/client/footer.ftl">
 
+</div>
 
 <script src="/js/jquery.min.js"></script>
 <script src="/online_shop/styles/bootstrap4/popper.js"></script>
@@ -246,6 +185,51 @@
 <script src="/online_shop/plugins/Isotope/isotope.pkgd.min.js"></script>
 <script src="/online_shop/plugins/easing/easing.js"></script>
 <script src="/online_shop/plugins/parallax-js-master/parallax.min.js"></script>
-<script src="/js/online_shop/client/home.js"></script>
+<script src="/js/online_shop/client/categories.js"></script>
 </body>
 </html>
+<script>
+    var baseUrl = "${baseUrl}";
+    var totalPage = ${productList.totalPage!};
+    var currentPage = ${productList.page!};
+    var categoryId = ${categoryId!};
+
+    $(document).ready(function(){
+        initPagination();
+    });
+
+    function initPagination(){
+        var p = [];
+        var pre = '<li><a href="javascript:search('+(currentPage-1)+');">上一页</a></li>';
+        var next = '<li><a href="javascript:search('+(currentPage+1)+');">下一页</a></li>';
+        var isDots = 0;
+
+        if (currentPage !== 1) {
+            p.push(pre);
+        }
+        for (var i = 1; i <= totalPage; i++) {
+            if (i === currentPage) {
+                p.push('<li class="active"><a href="javascript:search(' + i + ');">'+'第'+ i + '页'+  '</a></li>');
+            } else {
+                //根据条件判断是否显示页码
+                if (i < 2 || i === totalPage || i === (currentPage + 1) || i === (currentPage - 1)) {
+                    p.push('<li><a href="javascript:search(' + i + ');">' + i + '</a></li>');
+                    isDots = 1;
+                } else {
+                    if (isDots === 1) {
+                        p.push('<li>…</li>');
+                        isDots = 0;
+                    }
+                }
+            }
+        }
+        if(currentPage !== totalPage){
+            p.push(next);
+        }
+        $('#pagination').html(p);
+    }
+
+    function search(page) {
+        window.location.href=baseUrl+'/baabaa/product_category?categoryId='+categoryId+'&page='+page;
+    }
+</script>

@@ -20,12 +20,11 @@
                                                 </a>
                                             </li>
                                         </#list>
-                                        <li><a href="${baseUrl}/baabaa/product_details">Product</a></li>
                                     </ul>
                                 </li>
                                 <li><a href="#">购物指南</a></li>
                                 <li><a href="#">品牌故事</a></li>
-                                <li><a href="contact.html">联系方式</a></li>
+                                <li><a href="${baseUrl}/baabaa/contact">联系方式</a></li>
                             </ul>
                         </nav>
                         <div class="header_extra ml-auto">
@@ -113,17 +112,21 @@
                     </form>
                 </div>
                 <ul class="page_menu_nav menu_mm">
-                    <li class="page_menu_item has-children menu_mm">
+                    <li class="page_menu_item menu_mm">
                         <a href="${baseUrl}/baabaa/home">首页<i class="fa fa-angle-down"></i></a>
                     </li>
                     <li class="page_menu_item has-children menu_mm">
                         <a href="categories.html">分类<i class="fa fa-angle-down"></i></a>
                         <ul id="category" class="page_menu_selection menu_mm">
-                            <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
-                            <li class="page_menu_item menu_mm"><a href="categories.html">Category<i class="fa fa-angle-down"></i></a></li>
-                        </ul>
+                            <#list productCategoryList as item>
+                                  <li class="page_menu_item menu_mm">
+                                      <a href="${baseUrl}/baabaa/product_category?categoryId=${item.id!}">
+                                          ${item.categoryName!}
+                                          <i class="fa fa-angle-down"></i>
+                                      </a>
+                                  </li>
+                            </#list>
+                            </ul>
                     </li>
                     <li class="page_menu_item menu_mm"><a href="index.html">购物指南<i class="fa fa-angle-down"></i></a></li>
                     <li class="page_menu_item menu_mm"><a href="#">品牌故事<i class="fa fa-angle-down"></i></a></li>

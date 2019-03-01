@@ -1,5 +1,7 @@
 package buy.baabaashop.configurations;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -14,6 +16,9 @@ import java.io.IOException;
  */
 
 public class AlipayConfig {
+
+    @Value("${baseUrl}")
+    private static String baseUrl;
 	
 //↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 
@@ -27,10 +32,10 @@ public class AlipayConfig {
     public static String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs131y0PgeMIYSXckRcMGBISbe3SZ2g2sUkNNMkWD2UR956aLVF6GrTTR8Ciuy9xZQk5KOL2zpCOyXJYMkMsNuYA1Vd2qPXG1btvH5us6eepbd/zMl/Lxq7r3WVt5a/hnQhqJB6MEY+R9Q4DgKvwmRypEEi/vT6eH72LetcsNaww7nighovoPpgGJTHMpygurb8svxdAfwluokmBUhOw3X5bodCuc31t1+R6MbtGhbio1YkLmPBd8r4VqWbwbDz92zqb+h0M1eP6LyjJzsqrEWTc/WXQFUA+6Pk2cgQRipoFt2M6XibRRR9n5TI1mRDvrdTGl805mPywObLZN+J5lXwIDAQAB";
 
 	// 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-	public static String notify_url = "http://127.0.0.1:8080/alipay.trade.page.pay-JAVA-UTF-8/notify_url.jsp";
+	public static String notify_url = baseUrl +"/alipay.trade.page.pay-JAVA-UTF-8/notify_url.jsp";
 
 	// 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-	public static String return_url = "http://127.0.0.1:8080/baabaa/alipay_return";
+	public static String return_url = baseUrl + "/baabaa/alipay_return";
 
 	// 签名方式
 	public static String sign_type = "RSA2";

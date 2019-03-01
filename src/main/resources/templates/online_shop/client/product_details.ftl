@@ -126,58 +126,101 @@
 
     <!-- Products -->
 
-    <div class="products">
+    <#--<div class="products">-->
+        <#--<div class="container">-->
+            <#--<div class="row">-->
+                <#--<div class="col text-center">-->
+                    <#--<div class="products_title">相关推介</div>-->
+                <#--</div>-->
+            <#--</div>-->
+            <#--<div class="row">-->
+                <#--<div class="col">-->
+
+                    <#--<div class="product_grid">-->
+
+                        <#--<!-- Product &ndash;&gt;-->
+                        <#--<div class="product">-->
+                            <#--<div class="product_image"><img src="/online_shop/images/product_1.jpg" alt=""></div>-->
+                            <#--<div class="product_extra product_new"><a href="categories.html">New</a></div>-->
+                            <#--<div class="product_content">-->
+                                <#--<div class="product_title"><a href="product.html">Smart Phone</a></div>-->
+                                <#--<div class="product_price">$670</div>-->
+                            <#--</div>-->
+                        <#--</div>-->
+
+                        <#--<!-- Product &ndash;&gt;-->
+                        <#--<div class="product">-->
+                            <#--<div class="product_image"><img src="/online_shop/images/product_2.jpg" alt=""></div>-->
+                            <#--<div class="product_extra product_sale"><a href="categories.html">Sale</a></div>-->
+                            <#--<div class="product_content">-->
+                                <#--<div class="product_title"><a href="product.html">Smart Phone</a></div>-->
+                                <#--<div class="product_price">$520</div>-->
+                            <#--</div>-->
+                        <#--</div>-->
+
+                        <#--<!-- Product &ndash;&gt;-->
+                        <#--<div class="product">-->
+                            <#--<div class="product_image"><img src="/online_shop/images/product_3.jpg" alt=""></div>-->
+                            <#--<div class="product_content">-->
+                                <#--<div class="product_title"><a href="product.html">Smart Phone</a></div>-->
+                                <#--<div class="product_price">$710</div>-->
+                            <#--</div>-->
+                        <#--</div>-->
+
+                        <#--<!-- Product &ndash;&gt;-->
+                        <#--<div class="product">-->
+                            <#--<div class="product_image"><img src="/online_shop/images/product_4.jpg" alt=""></div>-->
+                            <#--<div class="product_content">-->
+                                <#--<div class="product_title"><a href="product.html">Smart Phone</a></div>-->
+                                <#--<div class="product_price">$330</div>-->
+                            <#--</div>-->
+                        <#--</div>-->
+
+                    <#--</div>-->
+                <#--</div>-->
+            <#--</div>-->
+        <#--</div>-->
+    <#--</div>-->
+
+    <!-- Icon Boxes -->
+
+    <div class="icon_boxes">
         <div class="container">
-            <div class="row">
-                <div class="col text-center">
-                    <div class="products_title">相关推介</div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
+            <div class="row icon_box_row">
 
-                    <div class="product_grid">
-
-                        <!-- Product -->
-                        <div class="product">
-                            <div class="product_image"><img src="/online_shop/images/product_1.jpg" alt=""></div>
-                            <div class="product_extra product_new"><a href="categories.html">New</a></div>
-                            <div class="product_content">
-                                <div class="product_title"><a href="product.html">Smart Phone</a></div>
-                                <div class="product_price">$670</div>
-                            </div>
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="/online_shop/images/icon_1.svg" alt=""></div>
+                        <div class="icon_box_title">全国免运费</div>
+                        <div class="icon_box_text">
+                            <p>指定快递公司：顺丰速运</p>
                         </div>
-
-                        <!-- Product -->
-                        <div class="product">
-                            <div class="product_image"><img src="/online_shop/images/product_2.jpg" alt=""></div>
-                            <div class="product_extra product_sale"><a href="categories.html">Sale</a></div>
-                            <div class="product_content">
-                                <div class="product_title"><a href="product.html">Smart Phone</a></div>
-                                <div class="product_price">$520</div>
-                            </div>
-                        </div>
-
-                        <!-- Product -->
-                        <div class="product">
-                            <div class="product_image"><img src="/online_shop/images/product_3.jpg" alt=""></div>
-                            <div class="product_content">
-                                <div class="product_title"><a href="product.html">Smart Phone</a></div>
-                                <div class="product_price">$710</div>
-                            </div>
-                        </div>
-
-                        <!-- Product -->
-                        <div class="product">
-                            <div class="product_image"><img src="/online_shop/images/product_4.jpg" alt=""></div>
-                            <div class="product_content">
-                                <div class="product_title"><a href="product.html">Smart Phone</a></div>
-                                <div class="product_price">$330</div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
+
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="/online_shop/images/icon_2.svg" alt=""></div>
+                        <div class="icon_box_title">七天无理由退换</div>
+                        <div class="icon_box_text">
+                            <p>购物没有顾虑，服务本该如此</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="/online_shop/images/icon_3.svg" alt=""></div>
+                        <div class="icon_box_title">快速客服响应</div>
+                        <div class="icon_box_text">
+                            <p>每日9:00~21:00欢迎咨询、投诉、建议</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

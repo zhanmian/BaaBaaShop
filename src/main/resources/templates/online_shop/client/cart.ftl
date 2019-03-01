@@ -124,32 +124,32 @@
                             <label class="delivery_option clearfix">次日送达
                                 <input type="radio" name="radio">
                                 <span class="checkmark"></span>
-                                <span class="delivery_price">$4.99</span>
+                                <span class="delivery_price">￥20</span>
                             </label>
                             <label class="delivery_option clearfix">普通运输
                                 <input type="radio" name="radio">
                                 <span class="checkmark"></span>
-                                <span class="delivery_price">$1.99</span>
+                                <span class="delivery_price">￥10</span>
                             </label>
                             <label class="delivery_option clearfix">商品自提
                                 <input type="radio" checked="checked" name="radio">
                                 <span class="checkmark"></span>
-                                <span class="delivery_price">Free</span>
+                                <span class="delivery_price">￥0</span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Coupon Code -->
-                    <div class="coupon">
-                        <div class="section_title">优惠券码</div>
-                        <div class="section_subtitle">输入你的优惠券码</div>
-                        <div class="coupon_form_container">
-                            <form action="#" id="coupon_form" class="coupon_form">
-                                <input type="text" class="coupon_input" required="required">
-                                <button class="button coupon_button"><span>兑换</span></button>
-                            </form>
-                        </div>
-                    </div>
+                    <#--<div class="coupon">-->
+                        <#--<div class="section_title">优惠券码</div>-->
+                        <#--<div class="section_subtitle">输入你的优惠券码</div>-->
+                        <#--<div class="coupon_form_container">-->
+                            <#--<form action="#" id="coupon_form" class="coupon_form">-->
+                                <#--<input type="text" class="coupon_input" required="required">-->
+                                <#--<button class="button coupon_button"><span>兑换</span></button>-->
+                            <#--</form>-->
+                        <#--</div>-->
+                    <#--</div>-->
                 </div>
 
                 <div class="col-lg-6 offset-lg-2">
@@ -164,11 +164,11 @@
                                 </li>
                                 <li class="d-flex flex-row align-items-center justify-content-start">
                                     <div class="cart_total_title">运费</div>
-                                    <div class="cart_total_value ml-auto">Free</div>
+                                    <div class="cart_total_value ml-auto">￥<span id="freight">0</span></div>
                                 </li>
                                 <li class="d-flex flex-row align-items-center justify-content-start">
                                     <div class="cart_total_title">总和</div>
-                                    <div class="cart_total_value ml-auto">$790.90</div>
+                                    <div class="cart_total_value ml-auto">￥<span id="total-amount"></span></div>
                                 </li>
                             </ul>
                         </div>

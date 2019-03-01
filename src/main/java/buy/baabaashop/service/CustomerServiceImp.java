@@ -1,6 +1,8 @@
 package buy.baabaashop.service;
 
 import buy.baabaashop.common.CommonException;
+import buy.baabaashop.common.PaginationRequestParam;
+import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
@@ -80,8 +82,23 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    public List<Product> selectRecommendProduct(){
+        return customerDao.selectRecommendProduct();
+    }
+
+    @Override
     public List<ProductCategory> getAllProductCategory(){
         return customerDao.selectAllProductCategory();
+    }
+
+    @Override
+    public PaginationResultData<Product> getProductByCategory(PaginationRequestParam param) {
+        PaginationResultData<Product> resultData = new PaginationResultData<>();
+        Integer totalRecord = customerDao.selectTotalRecordOfProductByCategory(param.getCategoryId());
+        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        List<Product> list = customerDao.selectProductByCategoryId(param);
+        resultData.setList(list);
+        return resultData;
     }
 
     @Override

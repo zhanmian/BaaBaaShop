@@ -400,10 +400,11 @@ section
 	position: absolute;
 	right: -15px;
 	top: calc(100% + 20px);
+	width: 100px;
 	text-align: right;
 	background: #FFFFFF;
-	padding-right: 25px;
-	padding-left: 35px;
+	padding-right: 15px;
+	padding-left: 15px;
 	padding-top: 25px;
 	padding-bottom: 25px;
 	visibility: hidden;

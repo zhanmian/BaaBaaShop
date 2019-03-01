@@ -1,6 +1,8 @@
 package buy.baabaashop.service;
 
 
+import buy.baabaashop.common.PaginationRequestParam;
+import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.entity.*;
 import org.springframework.ui.Model;
@@ -17,7 +19,11 @@ public interface CustomerService {
 
     ResultData login(HttpServletRequest request, HttpServletResponse response, Customer customer);
 
+    List<Product> selectRecommendProduct();
+
     List<ProductCategory> getAllProductCategory();
+
+    PaginationResultData<Product> getProductByCategory(PaginationRequestParam param);
 
     ResultData addCartItem(HttpServletRequest request, HttpServletResponse response, CartItem cartItem);
 

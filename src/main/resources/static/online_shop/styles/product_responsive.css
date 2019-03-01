@@ -176,6 +176,15 @@
 	{
 		margin-top: 21px;
 	}
+	.icon_box_col:not(:last-child)
+	{
+		margin-bottom: 60px;
+	}
+	.icon_box
+	{
+		padding-left: 80px;
+		padding-right: 80px;
+	}
 }
 
 /************

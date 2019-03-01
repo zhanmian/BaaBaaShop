@@ -5,6 +5,10 @@
 
 <mapper namespace="buy.baabaashop.dao.CustomerDao">
 
+    <select id="selectRecommendProduct" resultType="buy.baabaashop.entity.Product">
+        select * from product where recommend_status=1
+    </select>
+
     <select id="selectCustomerByUsername" resultType="buy.baabaashop.entity.Customer">
         select id, username, password
         from customer
@@ -25,7 +29,25 @@
     </insert>
 
     <select id="selectAllProductCategory" resultType="buy.baabaashop.entity.ProductCategory">
-        select * from product_category where parent_id=0
+        select * from product_category where parent_id not in (0)
+    </select>
+
+    <sql id="product_category">
+        select p.id, p.product_name, p.product_price, p.picture, pc.category_name from product p
+        left join product_category pc on pc.id = p.product_category_id
+        where pc.id=#{categoryId}
+    </sql>
+
+    <select id="selectProductByCategoryId" resultType="buy.baabaashop.entity.Product">
+       <include refid="product_category"></include> limit #{from}, #{pageSize}
+    </select>
+
+    <select id="selectTotalRecordOfProductByCategory" resultType="Integer">
+        select count(*) from (<include refid="product_category"></include>) s
+    </select>
+
+    <select id="selectCategoryName" resultType="String">
+        select category_name from product_category where id=#{categoryId}
     </select>
 
     <select id="selectProductDetails" resultType="buy.baabaashop.entity.Product">

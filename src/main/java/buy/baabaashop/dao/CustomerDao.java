@@ -1,5 +1,6 @@
 package buy.baabaashop.dao;
 
+import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,8 +16,20 @@ public interface CustomerDao {
     //添加用户
     void addCustomer(Customer customer);
 
+    //查找首页推荐商品
+    List<Product> selectRecommendProduct();
+
     //查找所有的商品分类
     List<ProductCategory> selectAllProductCategory();
+
+    //查找某一分类下的商品
+    List<Product> selectProductByCategoryId(PaginationRequestParam param);
+
+    //查找某一分类的商品数量
+    Integer selectTotalRecordOfProductByCategory(@Param("categoryId") Integer categoryId);
+
+    //查找分类名称
+    String selectCategoryName(@Param("categoryId") Integer categoryId);
 
     //查找商品详情
     Product selectProductDetails(Product product);

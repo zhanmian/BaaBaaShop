@@ -397,11 +397,13 @@ section
 {
 	position: absolute;
 	right: -15px;
+	/*设置宽度*/
+	width: 100px;
 	top: calc(100% + 20px);
 	text-align: right;
 	background: #FFFFFF;
-	padding-right: 25px;
-	padding-left: 35px;
+	padding-right: 15px;
+	padding-left: 15px;
 	padding-top: 25px;
 	padding-bottom: 25px;
 	visibility: hidden;
@@ -1065,7 +1067,8 @@ section
 .product_pagination
 {
 	width: 100%;
-	margin-top: 3px;
+	margin-top: 5px;
+	text-align: center;
 }
 .product_pagination ul li
 {
@@ -1073,13 +1076,14 @@ section
 }
 .product_pagination ul li:not(:last-child)
 {
-	margin-right: 3px;
+	margin-right: 5px;
 }
 .product_pagination ul li a
 {
-	font-size: 14px;
-	font-weight: 400;
+	font-size: 20px;
+	font-weight: 500;
 	color: #6c6a74;
+	margin-left: 8px;
 	-webkit-transition: all 200ms ease;
 	-moz-transition: all 200ms ease;
 	-ms-transition: all 200ms ease;
@@ -1089,7 +1093,8 @@ section
 .product_pagination ul li.active a,
 .product_pagination ul li:hover a
 {
-	color: #1b1b1b;
+	background-color: grey;
+	color: white;
 }
 
 /*********************************

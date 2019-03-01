@@ -400,10 +400,11 @@ section
 	position: absolute;
 	right: -15px;
 	top: calc(100% + 20px);
+	width: 100px;
 	text-align: right;
 	background: #FFFFFF;
-	padding-right: 25px;
-	padding-left: 35px;
+	padding-right: 15px;
+	padding-left: 15px;
 	padding-top: 25px;
 	padding-bottom: 25px;
 	visibility: hidden;
@@ -834,7 +835,7 @@ section
 {
 	position: absolute;
 	left: 0;
-	top: 32.3%;
+	top: 50%;
 	width: 100%;
 }
 .home_slider_content
@@ -1065,12 +1066,12 @@ section
 	font-weight: 400;
 	color: #FFFFFF;
 	line-height: 2.14;
-	margin-top: 11px;
+	margin-top: 20px;
 	padding-left: 2px;
 }
 .avds_link_large
 {
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 /*********************************
