@@ -222,7 +222,7 @@ $(document).ready(function()
                 var quantity = parseInt(dom.val()) - 1;
                 dom.val(quantity);
                 if (quantity <= 0) {
-                    quantity = 0;
+                    quantity = 1;
                     dom.val(quantity);
                 }
                 var skuId = $(this).parent().find('input[id=sku-id]').val();

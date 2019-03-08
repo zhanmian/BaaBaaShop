@@ -61,11 +61,13 @@
             </div>
             <div class="row cart_items_row">
                 <div class="col" id="cart-items">
-
-                    <#list cart.items as item>
+                    <#if hasItem==false>
+                        <div style="text-align: center"><p>购物车空空如也~</p></div>
+                    <#else>
+                        <#list cart.items as item>
                         <!-- CartItem Item -->
                         <div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start"
-                                id="${item.skuId!}">
+                             id="${item.skuId!}">
                             <!-- Name -->
                             <div class="cart_item_product d-flex flex-row align-items-center justify-content-start">
                                 <div class="cart_item_image">
@@ -87,7 +89,7 @@
                                         <span>数量</span>
                                         <input id="quantity_input" type="text" class="quantity_input" pattern="[0-9]*" value="${item.quantity!}">
                                         <div class="quantity_buttons">
-                                            <#--隐藏域-->
+                                        <#--隐藏域-->
                                             <input type="hidden" id="sku-id" value="${item.skuId!}">
                                             <div id="quantity_inc_button" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>
                                             <div id="quantity_dec_button" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>
@@ -98,8 +100,8 @@
                             <!-- Total -->
                             <div class="cart_item_total">￥<span class="item-total">${item.quantity! * item.skuPrice!}</span></div>
                         </div>
-                    </#list>
-
+                        </#list>
+                    </#if>
                 </div>
             </div>
             <div class="row row_cart_buttons">

@@ -237,6 +237,9 @@ public class CustomerServiceImp implements CustomerService {
 
                 model.addAttribute("cart", cart);
                 model.addAttribute("totalPrice", cart.getTotalPrice());
+                model.addAttribute("hasItem", true);
+            }else {
+                model.addAttribute("hasItem", false);
             }
 
         //如果用户登录就从数据库购物车表获取商品列表
@@ -248,7 +251,9 @@ public class CustomerServiceImp implements CustomerService {
             cart.setItems(cartItems);
             model.addAttribute("cart", cart);
             model.addAttribute("totalPrice", cart.getTotalPrice());
+            model.addAttribute("hasItem", true);
         }
+
         return "online_shop/client/cart";
     }
 
