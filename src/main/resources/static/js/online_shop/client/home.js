@@ -43,7 +43,7 @@ $(document).ready(function()
 	initHomeSlider();
 	initSearch();
 	initMenu();
-	initIsotope();
+	// initIsotope();
 
 	/* 
 

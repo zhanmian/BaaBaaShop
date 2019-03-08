@@ -111,9 +111,9 @@
     <div class="products">
         <div class="container">
             <div class="row">
-                <div class="col">
+                <#--<div class="col">-->
 
-                    <div class="product_grid">
+                    <#--<div class="product_grid">-->
 
                         <!-- Product -->
                         <#list recommendProducts as item>
@@ -135,9 +135,9 @@
                             </div>
                         </#list>
 
-                    </div>
+                    <#--</div>-->
 
-                </div>
+                <#--</div>-->
             </div>
         </div>
     </div>
