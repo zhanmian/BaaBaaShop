@@ -61,7 +61,7 @@
             </div>
             <div class="row cart_items_row">
                 <div class="col" id="cart-items">
-                    <#if hasItem==false>
+                    <#if hasItem=="false">
                         <div style="text-align: center"><p>购物车空空如也~</p></div>
                     <#else>
                         <#list cart.items as item>
