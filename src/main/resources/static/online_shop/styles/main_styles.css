@@ -1119,6 +1119,7 @@ section
 .product_title a:hover
 {
 	color: #e95a5a;
+	text-align: center
 }
 .product_price
 {
@@ -1127,6 +1128,7 @@ section
 	color: #6c6a74;
 	line-height: 0.75;
 	margin-top: 13px;
+	text-align: center
 }
 .product_extra
 {

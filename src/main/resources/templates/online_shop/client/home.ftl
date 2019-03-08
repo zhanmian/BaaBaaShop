@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="product_extra product_new"><a href="categories.html">New</a></div>
                                 <div class="product_content">
-                                    <div class="product_title">
+                                    <div class="product_title" style="text-align: center">
                                         <a href="${baseUrl}/baabaa/product_details?id=${item.id!}">
                                             ${item.productName!}
                                         </a>
