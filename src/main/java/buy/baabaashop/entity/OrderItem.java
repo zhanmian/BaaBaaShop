@@ -1,9 +1,6 @@
 package buy.baabaashop.entity;
 
 public class OrderItem extends ProductSku{
-    private Integer id;
-    private Integer customerId;
-    private Integer productId;
     private Integer orderId;
     private String orderCode;
     private Integer skuId;
@@ -11,37 +8,8 @@ public class OrderItem extends ProductSku{
     private String productName;
     private String productCode;
     private float productPrice;
-    private String username;
-    private String picture;
+    private String productPicture;
     private String productAttribute;
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
-
-    @Override
-    public Integer getProductId() {
-        return productId;
-    }
-
-    @Override
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
 
     public Integer getOrderId() {
         return orderId;
@@ -99,20 +67,12 @@ public class OrderItem extends ProductSku{
         this.productPrice = productPrice;
     }
 
-    public String getUsername() {
-        return username;
+    public String getProductPicture() {
+        return productPicture;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
+    public void setProductPicture(String productPicture) {
+        this.productPicture = productPicture;
     }
 
     public String getProductAttribute() {

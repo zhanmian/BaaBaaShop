@@ -1,5 +1,7 @@
 package buy.baabaashop.entity;
 
+import java.util.List;
+
 public class ProductAttribute {
     private Integer id;
     private String categoryName;
@@ -20,6 +22,7 @@ public class ProductAttribute {
     private String inputList;
     //手动添加的规格属性的值
     private String value;
+    private List<String> attributeValues;
 
     public Integer getId() {
         return id;
@@ -131,5 +134,13 @@ public class ProductAttribute {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public List<String> getAttributeValues() {
+        return attributeValues;
+    }
+
+    public void setAttributeValues(List<String> attributeValues) {
+        this.attributeValues = attributeValues;
     }
 }

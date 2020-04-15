@@ -92,7 +92,7 @@
         from product_category c1 left join product_category c2 on c1.id=c2.parent_id
         where c1.parent_id=0
     </select>
-    <resultMap id="categoryListWithChildren" type="buy.baabaashop.entity.ProductCategoryWithChildrenItem"
+    <resultMap id="categoryListWithChildren" type="buy.baabaashop.entity.cms.ProductCategoryWithChildrenItem"
         extends="children">
         <collection property="children" resultMap="children"
                     columnPrefix="child_"></collection>
@@ -102,7 +102,7 @@
         <result column="category_name" property="categoryName"></result>
     </resultMap>
 
-    <insert id="addProduct" parameterType="buy.baabaashop.entity.ProductParam">
+    <insert id="addProduct" parameterType="buy.baabaashop.entity.cms.ProductParam">
         <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
             SELECT LAST_INSERT_ID() as id
         </selectKey>
@@ -290,7 +290,7 @@
         <if test="id!=null">id=#{id}</if>
     </update>
 
-    <update id="updateProduct" parameterType="buy.baabaashop.entity.ProductParam">
+    <update id="updateProduct" parameterType="buy.baabaashop.entity.cms.ProductParam">
         update product set
         <if test="productName!=null">product_name=#{productName},</if>
         <if test="productCode!=null">product_code=#{productCode},</if>
@@ -339,7 +339,7 @@
         where p.id=#{id}
     </select>
 
-    <resultMap id="product_detail" type="buy.baabaashop.entity.ProductParam">
+    <resultMap id="product_detail" type="buy.baabaashop.entity.cms.ProductParam">
         <result property="productCategoryParentId" column="parent_id"></result>
         <result property="id" column="id"></result>
         <result property="productCode" column="product_code"></result>

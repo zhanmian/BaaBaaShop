@@ -8,7 +8,7 @@
     <select id="selectOrderList" resultType="buy.baabaashop.entity.OrderResult">
         select o.id, order_code, total_amount, o.create_time, pay_type, status, c.username
         from order_detail o
-        left join customer c on c.id=o.customer_id
+        left join customer c on c.user_id=o.user_id
         where o.delete_status not in ('1')
         limit #{from}, #{pageSize}
     </select>
@@ -18,27 +18,43 @@
     </select>
 
     <select id="selectOrderDetail" resultMap="order_detail">
-        select username, o.*,
-        oi.product_name item_product_name, oi.product_code item_product_code,
-        oi.product_picture item_product_picture, oi.product_price item_product_price,
-        oi.sku_id item_sku_id, oi.sku_code item_sku_code, oi.sku_price item_sku_price,
-        oi.spec1 item_spec1, oi.spec2 item_spec2, oi.spec3 item_spec3, oi.quantity item_quantity,
+        select
+        username,
+        o.*,
+        oi.product_name item_product_name,
+        oi.product_code item_product_code,
+        oi.product_picture item_product_picture,
+        oi.product_price item_product_price,
+        oi.sku_id item_sku_id,
+        oi.sku_code item_sku_code,
+        oi.sku_price item_sku_price,
+        oi.spec1 item_spec1,
+        oi.spec2 item_spec2,
+        oi.spec3 item_spec3,
+        oi.quantity item_quantity,
         oi.product_attribute item_product_attribute
         from order_detail o
         left join order_item oi on o.id=oi.order_id
-        left join customer c on o.customer_id=c.id
+        left join customer c on o.user_id=c.user_id
         where o.id=#{id}
     </select>
 
-    <resultMap id="order_detail" type="buy.baabaashop.entity.OrderDetailResult">
+    <resultMap id="order_detail" type="buy.baabaashop.entity.cms.OrderDetailResult">
         <result property="username" column="username"></result>
         <result property="orderCode" column="order_code"></result>
         <result property="totalAmount" column="total_amount"></result>
         <result property="freight" column="freight"></result>
         <result property="createTime" column="create_time"></result>
         <result property="payType" column="pay_type"></result>
+        <result property="payCode" column="pay_code"></result>
         <result property="paymentTime" column="payment_time"></result>
         <result property="status" column="status"></result>
+        <result property="province" column="province"></result>
+        <result property="city" column="city"></result>
+        <result property="town" column="town"></result>
+        <result property="detailAddress" column="detail_address"></result>
+        <result property="receiverName" column="receiver_name"></result>
+        <result property="receiverPhone" column="receiver_phone"></result>
         <collection columnPrefix="item_"  property="orderItemList" resultMap="order_item"></collection>
     </resultMap>
 
@@ -46,9 +62,10 @@
         <result property="productName" column="product_name"></result>
         <result property="productPrice" column="product_price"></result>
         <result property="productCode" column="product_code"></result>
-        <result property="picture" column="product_picture"></result>
+        <result property="productPicture" column="product_picture"></result>
         <result property="quantity" column="quantity"></result>
         <result property="skuPrice" column="sku_price"></result>
+        <result property="skuCode" column="sku_code"></result>
         <result property="spec1" column="spec1"></result>
         <result property="spec2" column="spec2"></result>
         <result property="spec3" column="spec3"></result>

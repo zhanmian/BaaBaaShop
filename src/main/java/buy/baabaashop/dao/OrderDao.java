@@ -1,7 +1,7 @@
 package buy.baabaashop.dao;
 
 import buy.baabaashop.common.PaginationRequestParam;
-import buy.baabaashop.entity.OrderDetailResult;
+import buy.baabaashop.entity.cms.OrderDetailResult;
 import buy.baabaashop.entity.OrderResult;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

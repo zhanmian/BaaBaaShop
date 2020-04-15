@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PaginationResultData<T> extends ResultData implements Serializable {
+public class PaginationResultData<T> {
     private Integer page = 0;
     private Integer pageSize = 0;
 
@@ -71,15 +71,5 @@ public class PaginationResultData<T> extends ResultData implements Serializable 
         if (this.totalRecord % this.pageSize != 0) {
             this.totalPage = this.totalPage + 1;
         }
-    }
-
-    public Map<String, Object> convertToMap(Integer draw){
-        Map<String, Object> map = new HashMap<>();
-        map.put("draw", draw);
-        map.put("recordsTotal", this.totalRecord);
-        map.put("recordsFiltered", this.totalRecord);
-        map.put("data", this.list);
-
-        return map;
     }
 }

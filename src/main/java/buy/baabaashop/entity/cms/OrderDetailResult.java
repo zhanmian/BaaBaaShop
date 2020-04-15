@@ -1,41 +1,46 @@
-package buy.baabaashop.entity;
+package buy.baabaashop.entity.cms;
+
+import buy.baabaashop.entity.OrderItem;
 
 import java.util.List;
 
-public class OrderResult {
-    //订单ID
-    private Integer id;
-    //用户名
+public class OrderDetailResult {
+
     private String username;
-    //订单编号
+
+    private Integer orderId;
+
     private String orderCode;
-    //总价
+
     private float totalAmount;
-    //订单状态：0待付款，1待发货，2已发货，3已完成，4已关闭
-    private Integer status;
-    //确认收货状态：0未确认，1已确认
-    private Integer confirmStatus;
-    //支付方式：0未支付，1支付宝，2微信支付
-    private Integer payType;
-    //订单创建时间
+
     private String createTime;
+
+    private Integer payType;
+
+    private String  payCode;
+
     private String paymentTime;
+
+    private float freight;
+
+    private Integer status;
+
     private String province;
+
     private String city;
+
     private String town;
+
     private String detailAddress;
+
+    private String postcode;
+
     private String receiverName;
+
     private String receiverPhone;
-    private String buyerMessage;
+
     private List<OrderItem> orderItemList;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
@@ -43,6 +48,14 @@ public class OrderResult {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public String getOrderCode() {
@@ -61,20 +74,12 @@ public class OrderResult {
         this.totalAmount = totalAmount;
     }
 
-    public Integer getStatus() {
-        return status;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getConfirmStatus() {
-        return confirmStatus;
-    }
-
-    public void setConfirmStatus(Integer confirmStatus) {
-        this.confirmStatus = confirmStatus;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public Integer getPayType() {
@@ -85,12 +90,36 @@ public class OrderResult {
         this.payType = payType;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getPayCode() {
+        return payCode;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setPayCode(String payCode) {
+        this.payCode = payCode;
+    }
+
+    public String getPaymentTime() {
+        return paymentTime;
+    }
+
+    public void setPaymentTime(String paymentTime) {
+        this.paymentTime = paymentTime;
+    }
+
+    public float getFreight() {
+        return freight;
+    }
+
+    public void setFreight(float freight) {
+        this.freight = freight;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getProvince() {
@@ -125,6 +154,14 @@ public class OrderResult {
         this.detailAddress = detailAddress;
     }
 
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
     public String getReceiverName() {
         return receiverName;
     }
@@ -141,27 +178,11 @@ public class OrderResult {
         this.receiverPhone = receiverPhone;
     }
 
-    public String getBuyerMessage() {
-        return buyerMessage;
-    }
-
-    public void setBuyerMessage(String buyerMessage) {
-        this.buyerMessage = buyerMessage;
-    }
-
     public List<OrderItem> getOrderItemList() {
         return orderItemList;
     }
 
     public void setOrderItemList(List<OrderItem> orderItemList) {
         this.orderItemList = orderItemList;
-    }
-
-    public String getPaymentTime() {
-        return paymentTime;
-    }
-
-    public void setPaymentTime(String paymentTime) {
-        this.paymentTime = paymentTime;
     }
 }

@@ -1,7 +1,7 @@
 package buy.baabaashop.dao;
 
-import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.client.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,62 +16,81 @@ public interface CustomerDao {
     //添加用户
     void addCustomer(Customer customer);
 
+
+
+    //查找用户的收货地址
+    List<Address> selectAddress(@Param("userId") Integer userId);
+
+    //新增收货地址
+    void addAddress(Address address);
+
+
+
+    //查找用户的订单列表
+    List<OrderResult> selectOrderByUserId(OrderRequestParam param);
+
+    //查找用户的订单所拥有的商品列表
+    List<OrderItem> selectOrderItemByOrderId(@Param("userId")Integer userId);
+
+    //查找用户的订单列表的总数量
+    Integer selectTotalRecordForOrderList(OrderRequestParam param);
+
+
+
+    //搜索商品
+    List<Product> searchProduct(ProductSearchParam productSearchParam);
+
+    //搜索商品结果的总数量
+    Integer selectTotalRecordForSearch(ProductSearchParam productSearchParam);
+
+
+
     //查找首页推荐商品
     List<Product> selectRecommendProduct();
+
+
 
     //查找所有的商品分类
     List<ProductCategory> selectAllProductCategory();
 
     //查找某一分类下的商品
-    List<Product> selectProductByCategoryId(PaginationRequestParam param);
+    List<Product> selectProductByCategoryId(ProductCategoryParam param);
 
     //查找某一分类的商品数量
-    Integer selectTotalRecordOfProductByCategory(@Param("categoryId") Integer categoryId);
+    Integer selectTotalRecordOfProductByCategory(ProductCategoryParam param);
 
-    //查找分类名称
-    String selectCategoryName(@Param("categoryId") Integer categoryId);
+
 
     //查找商品详情
-    Product selectProductDetails(Product product);
+    Product selectProductDetails(@Param("id") Integer id);
+
+
 
     List<ProductSku> selectSkuByProductId(@Param("productId") Integer productId);
 
     //根据商品ID查找商品的规格属性
-    List<ProductAttribute> selectProductAttribute(Product product);
+    List<ProductAttribute> selectProductAttribute(@Param("id") Integer id);
 
     //查找手动添加的商品规格属性的值
-    List<ProductAttribute> selectAddAttributeValue(Product product);
+    List<ProductAttribute> selectAddAttributeValue(@Param("id") Integer id);
 
     //根据规格属性和商品ID查找出SKU，用于商品详情点击不同规格组合时显示不同的价格、库存等信息
     ProductSku selectSkuByAttributes(ProductSku productSku);
 
-    //根据用户名查找用户ID
-    Integer selectCustomerIdByUsername(@Param("username") String username);
-
-    //添加购物车
-    void addCart(CartItem cartItem);
-
-    //更新购物车商品的数量
-    void updateCartQuantity(CartItem cartItem);
-
-    //根据SkuId和用户ID查找对应的购物车商品
-    CartItem checkCartItemBySkuId(CartItem cartItem);
-
     //根据SkuId查找商品详情，主要用于查找库存数量
-    CartItem selectItemBySkuId(CartItem cartItem);
+    List<CartItem> selectItemBySkuId(List<CartItem> cartItems);
 
-    //根据用户ID查找该用户的购物车商品列表
-    List<CartItem> selectCartByCustomerId(@Param("customerId") Integer customerId);
 
-    //生成订单
-    void generateOrder(Order order);
 
-    //订单包含的商品
-    void insertOrderItem(OrderItem orderItem);
+    //写入订单
+    void addOrder(OrderParam order);
+
+    //写入订单包含的商品
+    void insertOrderItem(OrderParam orderParam);
 
     //更新SKU库存
-    void updateSkuStock(CartItem cartItem);
+    void updateSkuStock(List<CartItem> cartItems);
 
-    //生成订单后删除购物车
-    void deleteCartByCustomerId(@Param("customerId") Integer customerId);
+    void updateOrder(OrderParam orderParam);
+
 }

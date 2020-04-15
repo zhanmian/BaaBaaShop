@@ -1,39 +1,69 @@
 package buy.baabaashop.service;
 
 
-import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
-import buy.baabaashop.common.ResultData;
+import buy.baabaashop.common.Result;
 import buy.baabaashop.entity.*;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import buy.baabaashop.entity.client.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerService {
 
-    ResultData register(Customer customer);
+    /**
+     * 注册
+     */
+    Result register(Customer customer);
 
-    ResultData login(HttpServletRequest request, HttpServletResponse response, Customer customer);
+    /**
+     * 登录
+     */
+    Result login(Customer customer);
 
+    /**
+     * 根据用户ID查找收货地址
+     */
+    List<Address> selectAddress(Integer userId);
+
+    /**
+     * 获取首页推荐商品列表
+     */
     List<Product> selectRecommendProduct();
 
+    /**
+     * 获取所有的分类列表
+     */
     List<ProductCategory> getAllProductCategory();
 
-    PaginationResultData<Product> getProductByCategory(PaginationRequestParam param);
+    /**
+     * 根据分类获取商品
+     */
+    PaginationResultData<Product> getProductByCategory(ProductCategoryParam param);
 
-    ResultData addCartItem(HttpServletRequest request, HttpServletResponse response, CartItem cartItem);
+    PaginationResultData<OrderResult> getOrderListByUser(OrderRequestParam param);
 
-    String selectProductAttribute(Product product);
+    PaginationResultData<Product> getProductBySearch(ProductSearchParam param);
 
-    String toCart(HttpServletRequest request, Model model) throws IOException;
+    /**
+     * 加载商品详情时获取规格属性
+     */
+    List<ProductAttribute> selectProductAttribute(Integer id);
 
-    ResultData updateQuantity(HttpServletRequest request, HttpServletResponse response, CartItem cartItem) throws IOException;
+    /**
+     * 获取前端本地购物车中的商品的详情
+     */
+    Map getCartItemsDetails(List<CartItem> cartItems);
 
-    String checkOut(HttpServletRequest request, Model model);
+    /**
+     * 获取支付宝返回的Form表单
+     */
+    String aliPay(OrderParam orderParam) throws Exception;
 
-    String generateOrder(HttpServletRequest request, HttpServletResponse response, Order orderParam, RedirectAttributes attributes);
+    /**
+     * 生成订单并前往支付
+     */
+    Result pay(OrderParam orderParam);
+
+    Result updateOrder(OrderParam param);
 }

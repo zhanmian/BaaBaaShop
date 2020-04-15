@@ -6,6 +6,15 @@ public class ProductCategory {
     private Integer categoryLevel;
     private Integer parentId;
     private String createTime;
+    private Integer count;
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 
     public Integer getId() {
         return id;

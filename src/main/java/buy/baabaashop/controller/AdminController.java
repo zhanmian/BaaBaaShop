@@ -3,8 +3,11 @@ package buy.baabaashop.controller;
 import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
-import buy.baabaashop.dao.ProductDao;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.cms.CmsProductCategoryParam;
+import buy.baabaashop.entity.cms.ProductAttributeRequestParam;
+import buy.baabaashop.entity.cms.ProductCategoryWithChildrenItem;
+import buy.baabaashop.entity.cms.ProductParam;
 import buy.baabaashop.service.ProductService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +91,7 @@ public class AdminController {
     @RequestMapping(value = "product_category")
     @ResponseBody
     public PaginationResultData<ProductCategory> getProductCategoryList(
-            @RequestBody PaginationRequestParam param){
+            @RequestBody CmsProductCategoryParam param){
         return productService.selectProductCategoryList(param);
     }
 
@@ -141,7 +144,7 @@ public class AdminController {
     @RequestMapping(value = "product_attribute")
     @ResponseBody
     public PaginationResultData<ProductAttribute> getProductAttribute(
-            @RequestBody PaginationRequestParam param){
+            @RequestBody ProductAttributeRequestParam param){
         return productService.selectProductAttribute(param);
     }
 

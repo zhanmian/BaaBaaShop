@@ -1,46 +1,25 @@
 package buy.baabaashop.controller;
 
-import buy.baabaashop.common.PaginationRequestParam;
-import buy.baabaashop.common.PaginationResultData;
-import buy.baabaashop.common.ResultData;
+import buy.baabaashop.common.Result;
 import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.client.*;
 import buy.baabaashop.service.CustomerService;
-import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.request.AlipayTradePagePayRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/baabaa")
 public class CustomerController {
-
-    @Value("${baseUrl}")
-    private String baseUrl;
-
-    @ModelAttribute
-    public void populateModel(Model model) {
-        model.addAttribute("baseUrl", baseUrl);
-        model.addAttribute("productCategoryList", customerService.getAllProductCategory());
-    }
 
     @Resource
     private CustomerService customerService;
@@ -48,143 +27,133 @@ public class CustomerController {
     @Resource
     private CustomerDao customerDao;
 
-    @RequestMapping(value = "/to_sign_up")
-    public String toRegister() {
-        return "online_shop/client/online_shop_register";
-    }
-
+    //注册
     @RequestMapping(value = "/register")
     @ResponseBody
-    public ResultData register(HttpServletRequest request, Customer customer) {
+    public Result register(@RequestBody Customer customer) {
         return customerService.register(customer);
     }
 
-    @RequestMapping(value = "/to_login")
-    public String toLogin() {
-        return "online_shop/client/online_shop_login";
-    }
-
+    //登录，返回Token
     @RequestMapping(value = "/login")
     @ResponseBody
-    public ResultData login(HttpServletRequest request, HttpServletResponse response, Customer customer) {
-        return customerService.login(request, response, customer);
+    public Result login(@RequestBody Customer customer) {
+        return customerService.login(customer);
     }
 
-    @RequestMapping(value = "/home")
-    public String toHome(Model model) {
-        //首页推荐商品列表
-        model.addAttribute("recommendProducts", customerService.selectRecommendProduct());
-        return "online_shop/client/home";
-    }
-
-    @RequestMapping(value = "/product_category")
-    public String toProductCategory(HttpServletRequest request, PaginationRequestParam param,
-                                    Model model) {
-        PaginationResultData<Product> resultData = customerService.getProductByCategory(param);
-        model.addAttribute("productList", resultData);
-        model.addAttribute("categoryId", param.getCategoryId());
-        return "online_shop/client/category";
-    }
-
-    @RequestMapping(value = "/product_details")
-    public String toProductDetails(HttpServletRequest request, Product product, Model model) {
-        model.addAttribute("product", customerDao.selectProductDetails(product));
-        String attributeList = customerService.selectProductAttribute(product);
-        model.addAttribute("attributeList", attributeList);
-        model.addAttribute("productId", product.getId());
-        return "online_shop/client/product_details";
-    }
-
-    @RequestMapping(value = "get_sku_details")
+    /**
+     * 获取用户的收货地址列表
+     */
+    @RequestMapping("/getAddress")
     @ResponseBody
+    public Result getAddress(@RequestParam Integer userId) {
+        return Result.success(customerService.selectAddress(userId));
+    }
+
+    /**
+     * 添加收货地址
+     */
+    @RequestMapping("/addAddress")
+    @ResponseBody
+    public Result addAddress(@RequestBody Address address) {
+        customerDao.addAddress(address);
+        return Result.success();
+    }
+
+    /**
+     * 根据分类获取商品列表（分页）
+     */
+    @RequestMapping(value = "/getProductByCategory")
+    @ResponseBody
+    public Result getProductByCategory(@RequestBody ProductCategoryParam param) {
+        return Result.success(customerService.getProductByCategory(param));
+    }
+
+    //获取全部分类
+    @RequestMapping("/getCategoryList")
+    @ResponseBody
+    public Result getCategoryList() {
+        return Result.success(customerService.getAllProductCategory());
+    }
+
+    /**
+     * 获取用户的订单列表
+     */
+    @RequestMapping("/getOrderListByUser")
+    @ResponseBody
+    public Result getOrderListByUser(@RequestBody OrderRequestParam param) {
+        return Result.success(customerService.getOrderListByUser(param));
+    }
+
+    //首页推荐商品列表
+    @RequestMapping(value = "/getRecommendProducts")
+    @ResponseBody
+    public Result getRecommendProducts() {
+        return Result.success(customerService.selectRecommendProduct());
+    }
+
+    /**
+     * 搜索商品（分页）
+     */
+    @RequestMapping("/searchProduct")
+    @ResponseBody
+    public Result searchProduct(@RequestBody ProductSearchParam param) {
+        return Result.success(customerService.getProductBySearch(param));
+    }
+
+    //根据 productId 获取商品详情
+    @RequestMapping("/getProductDetails")
+    @ResponseBody
+    public Result toProductDetails(@RequestParam("id") int id) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("product", customerDao.selectProductDetails(id));
+        data.put("attributeList", customerService.selectProductAttribute(id));
+        return Result.success(data);
+    }
+
     //根据规格属性和商品ID查找匹配的sku以实现点击后动态更改价格等信息
-    public ProductSku getProductDetails(@RequestBody ProductSku productSku) {
-        return customerDao.selectSkuByAttributes(productSku);
-    }
-
-    @RequestMapping(value = "/add_cart")
+    @RequestMapping("/getSkuDetails")
     @ResponseBody
-    public ResultData addCart(HttpServletRequest request, CartItem cartItem,
-                              HttpServletResponse response) {
-        return customerService.addCartItem(request, response, cartItem);
+    public Result getProductDetails(@RequestBody ProductSku productSku) {
+        ProductSku sku = customerDao.selectSkuByAttributes(productSku);
+        if (sku != null) {
+            return Result.success(sku);
+        } else {
+            return Result.failed("请求失败，商品信息出错");
+        }
     }
 
-    @RequestMapping(value = "/cart")
-    public String toCart(HttpServletRequest request, Model model) throws IOException {
-        return customerService.toCart(request, model);
-    }
-
-    @RequestMapping(value = "/check_stock")
+    //获取前端本地购物车中的商品详情列表
+    @RequestMapping("/getCartItemsDetails")
     @ResponseBody
-    public Integer checkStock(HttpServletRequest request, CartItem cartItem) {
-        return customerDao.selectItemBySkuId(cartItem).getSkuStock();
+    public Result getCartItemsDetails(@RequestBody List<CartItem> cartItems) {
+        return Result.success(customerService.getCartItemsDetails(cartItems));
     }
 
-    @RequestMapping(value = "update_quantity")
+    /**
+     * 支付结算
+     */
+    @RequestMapping("/pay")
     @ResponseBody
-    public ResultData updateQuantity(HttpServletRequest request,
-                                     HttpServletResponse response,
-                                     CartItem cartItem) throws IOException {
-        return customerService.updateQuantity(request, response, cartItem);
+    public Result pay(@RequestBody OrderParam orderParam) {
+        return customerService.pay(orderParam);
     }
 
-    @RequestMapping(value = "checkout")
-    public String toCheckout(HttpServletRequest request, Model model) {
-        return customerService.checkOut(request, model);
-    }
-
-    @RequestMapping(value = "generate_order")
-    public String generateOrder(HttpServletRequest request, Order orderParam,
-                                HttpServletResponse response, RedirectAttributes attributes) {
-        return customerService.generateOrder(request, response, orderParam, attributes);
-    }
-
-    @RequestMapping(value = "contact")
-    public String toContact() {
-        return "online_shop/client/contact";
-    }
-
-    @RequestMapping(value = "alipay")
+    /**
+     * 支付完成后修改订单数据
+     */
+    @RequestMapping("/updateOrder")
     @ResponseBody
-    public String toPayPage(@ModelAttribute Order order) throws Exception {
-
-        //获得初始化的AlipayClient
-        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id,
-                AlipayConfig.merchant_private_key, "json", AlipayConfig.charset,
-                AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
-
-        //设置请求参数
-        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
-        alipayRequest.setReturnUrl(AlipayConfig.return_url);
-        alipayRequest.setNotifyUrl(AlipayConfig.notify_url);
-
-        //商户订单号，商户网站订单系统中唯一订单号，必填
-        String out_trade_no = order.getOrderCode();
-        //付款金额，必填
-        String total_amount = String.valueOf(order.getTotalAmount());
-        //订单名称，必填
-        String subject = "BaaBaa Shop 商城订单";
-        //商品描述，可空
-        String body = " ";
-
-        //该笔订单允许的最晚付款时间，逾期将关闭交易。
-        // 取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
-        String timeout_express = "1c";
-
-        alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
-                + "\"total_amount\":\"" + total_amount + "\","
-                + "\"subject\":\"" + subject + "\","
-                + "\"body\":\"" + body + "\","
-                + "\"timeout_express\":\"" + timeout_express + "\","
-                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
-
-        //返回请求
-        return alipayClient.pageExecute(alipayRequest).getBody();
+    public Result updateOrder(@RequestBody OrderParam param) {
+        return customerService.updateOrder(param);
     }
 
-    @RequestMapping(value = "alipay_return")
-    public String alipayReturn(HttpServletRequest request, HttpServletResponse response,
-                               Model model) throws Exception {
+    /**
+     * 用于支付宝回调，用于以前的JSP，现在前端是获取路由参数
+     */
+    @RequestMapping("/alipay_return")
+    @ResponseBody
+    public Result alipayReturn(HttpServletRequest request) throws Exception {
 
         //获取支付宝GET过来反馈信息
         Map<String, String> params = new HashMap<String, String>();
@@ -215,41 +184,13 @@ public class CustomerController {
             //付款金额
             String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
 
-            model.addAttribute("orderCode", out_trade_no);
-            model.addAttribute("alipayTradeNo", trade_no);
-            model.addAttribute("totalAmount", total_amount);
-
+            Map<String, Object> data = new HashMap<>();
+            data.put("orderCode", out_trade_no);
+            data.put("alipayTradeNo", trade_no);
+            data.put("totalAmount", total_amount);
+            return Result.success(data);
         } else {
-            System.out.println("验签失败");
+            return Result.failed("验签失败");
         }
-        return "/online_shop/client/alipay_return";
     }
-
-    //从request获取JSON
-    public static String getRequestBodyAsString(HttpServletRequest request) throws Exception {
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder("");
-        try {
-            br = request.getReader();
-            String str;
-            while ((str = br.readLine()) != null) {
-                sb.append(str);
-            }
-            br.close();
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (null != br) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        String s = sb.toString();
-        System.out.println("请求数据：" + s);
-        return s;
-    }
-
 }

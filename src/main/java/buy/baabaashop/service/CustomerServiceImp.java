@@ -1,33 +1,21 @@
 package buy.baabaashop.service;
 
-import buy.baabaashop.common.CommonException;
-import buy.baabaashop.common.PaginationRequestParam;
-import buy.baabaashop.common.PaginationResultData;
-import buy.baabaashop.common.ResultData;
+import buy.baabaashop.common.*;
+import buy.baabaashop.configurations.AlipayConfig;
 import buy.baabaashop.dao.CustomerDao;
 import buy.baabaashop.entity.*;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import buy.baabaashop.entity.client.*;
+import buy.baabaashop.utils.JwtTokenUtil;
+import buy.baabaashop.utils.Utils;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
@@ -35,50 +23,44 @@ public class CustomerServiceImp implements CustomerService {
     @Resource
     private CustomerDao customerDao;
 
+    @Resource
+    private CustomerService customerService;
+
     @Override
-    @Transactional
-    public ResultData register(Customer customer){
-        ResultData resultData = new ResultData();
-        String password = md5Password(customer.getPassword());
+    @Transactional(rollbackFor=Exception.class)
+    public Result register(Customer customer){
+        String password = Utils.md5Password(customer.getPassword());
         customer.setPassword(password);
         try{
             customerDao.addCustomer(customer);
-        }catch(CommonException c){
-            c.printStackTrace();
-            throw new CommonException(c.getCode(), c.getMessage());
+            return Result.success(null, "注册成功，前往登录页面");
         }catch(Exception e){
             e.printStackTrace();
-            throw new CommonException();
+            return Result.failed(e.getMessage());
         }
-        return resultData;
     }
 
     @Override
-    public ResultData login(HttpServletRequest request,
-                            HttpServletResponse response,
-                            Customer customer){
-        ResultData resultData = new ResultData();
-        String password = customerDao.selectCustomerByUsername(customer).getPassword();
+    public Result login(Customer customer){
+        Customer user = customerDao.selectCustomerByUsername(customer);
+        String password = user.getPassword();
 
-        if (md5Password(customer.getPassword()).equals(password)) {
-            resultData.setMessage("登录成功");
-            resultData.setCode(1);
+        if (Utils.md5Password(customer.getPassword()).equals(password)) {
+            String token = JwtTokenUtil.generateToken(customer.getUsername());
 
-            HttpSession session = request.getSession();
-            session.setAttribute("username", customer.getUsername());
-            session.setAttribute("password", password);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+            data.put("userInfo", user);
 
-            Cookie usernameCookie = new Cookie("username", customer.getUsername());
-            usernameCookie.setMaxAge(24*60*60*30);
-            usernameCookie.setPath("/");
-            response.addCookie(usernameCookie);
-
-            System.out.println("外部的SessionId:" + session.getId());
+            return Result.success(data);
         } else {
-            resultData.setMessage("密码或用户名输入错误");
-            resultData.setCode(0);
+            return Result.failed("密码或用户名输入错误");
         }
-        return resultData;
+    }
+
+    @Override
+    public List<Address> selectAddress(Integer userId) {
+        return customerDao.selectAddress(userId);
     }
 
     @Override
@@ -92,9 +74,9 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
-    public PaginationResultData<Product> getProductByCategory(PaginationRequestParam param) {
+    public PaginationResultData<Product> getProductByCategory(ProductCategoryParam param) {
         PaginationResultData<Product> resultData = new PaginationResultData<>();
-        Integer totalRecord = customerDao.selectTotalRecordOfProductByCategory(param.getCategoryId());
+        Integer totalRecord = customerDao.selectTotalRecordOfProductByCategory(param);
         resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
         List<Product> list = customerDao.selectProductByCategoryId(param);
         resultData.setList(list);
@@ -102,14 +84,32 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
-    public String selectProductAttribute(Product product){
+    public PaginationResultData<OrderResult> getOrderListByUser(OrderRequestParam param) {
+        PaginationResultData<OrderResult> resultData = new PaginationResultData<>();
+        Integer totalRecord = customerDao.selectTotalRecordForOrderList(param);
+        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        List<OrderResult> list = customerDao.selectOrderByUserId(param);
+        resultData.setList(list);
+        return resultData;
+    }
+
+    @Override
+    public PaginationResultData<Product> getProductBySearch(ProductSearchParam param) {
+        PaginationResultData<Product> resultData = new PaginationResultData<>();
+        Integer totalRecord = customerDao.selectTotalRecordForSearch(param);
+        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
+        List<Product> list = customerDao.searchProduct(param);
+        resultData.setList(list);
+        return resultData;
+    }
+
+
+    @Override
+    public List<ProductAttribute> selectProductAttribute(Integer id) {
         //查找出该商品对应的规格属性列表
-        List<ProductAttribute> attributeList = customerDao.selectProductAttribute(product);
+        List<ProductAttribute> attributeList = customerDao.selectProductAttribute(id);
         //查找出该商品对应的手动输入的规格属性列表
-        List<ProductAttribute> addAttributeValueList = customerDao.selectAddAttributeValue(product);
-        //创建一个JSON数组节点
-        ObjectMapper objectMapper = new ObjectMapper();
-        ArrayNode arrayNode = objectMapper.createArrayNode();
+        List<ProductAttribute> addAttributeValueList = customerDao.selectAddAttributeValue(id);
 
         for(ProductAttribute p : attributeList){
             for(ProductAttribute a : addAttributeValueList){
@@ -118,363 +118,109 @@ public class CustomerServiceImp implements CustomerService {
                     p.setInputList(a.getValue());
                 }
             }
-            //创建一个JSON对象节点并把它添加进之前创建的JSON数组节点中
-            ObjectNode objectNode = objectMapper.createObjectNode();
-            objectNode.put("name", p.getAttributeName());
-            objectNode.put("value", p.getInputList());
-            arrayNode.add(objectNode);
+            p.setAttributeValues(
+                    Arrays.asList(p.getInputList().split(",")).stream().map(s -> String.format(s.trim())).collect(Collectors.toList()));
         }
-        return arrayNode.toString();
+        return attributeList;
     }
 
     @Override
-    @Transactional
-    public ResultData addCartItem(HttpServletRequest request,
-                            HttpServletResponse response,
-                            CartItem cartItem) {
-        ResultData resultData = new ResultData();
-        try{
-            Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
-            if(cartItem.getQuantity() > skuStock){
-                resultData.setMessage("没有更多库存了");
-                return resultData;
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            //如果对象中有Null值的就忽略，不转为Json
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-            Cart cart = null;
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies != null && cookies.length > 0){
-                cart = getCartFromCookie(cookies, objectMapper);
-            }
-            //如果cart对象为null则新建一个对象
-            if(cart == null){
-                cart = new Cart();
-            }
-            //将当前商品添加进购物车商品列表
-            if(cartItem.getSkuId() != null && cartItem.getQuantity() != null){
-                cart.addItem(cartItem);
-            }
-            //如果用户没有登录的话就存入cookie
-            HttpSession session = request.getSession();
-            String username = (String)session.getAttribute("username");
-            if(username == null || username.equals("")){
-                //把对象转换为JSON字符串方便cookie存储
-                String cartStr = objectMapper.writeValueAsString(cart);
-                //存储cookie时如果没有对JSON字符串进行编码会出现严重错误：非法字符[34]
-                Cookie cartCookie = new Cookie("cart", URLEncoder.encode(cartStr, "utf8"));
-                cartCookie.setMaxAge(24*60*60*30);
-                cartCookie.setPath("/");
-                response.addCookie(cartCookie);
-                resultData.setMessage("购物车添加成功");
-
-            //如果用户登录了，那么将cookie中的购物车写入数据库
-            }else{
-                Integer customerId = customerDao.selectCustomerIdByUsername(username);
-                //查找数据库中是否有同款商品，有就更新数量，没有就新增
-                for(CartItem item : cart.getItems()){
-                    item.setCustomerId(customerId);
-                    CartItem dbCartItem = customerDao.checkCartItemBySkuId(item);
-                    if(dbCartItem != null){
-                        item.setId(dbCartItem.getId());
-                        item.setQuantity(item.getQuantity() + dbCartItem.getQuantity());
-                        customerDao.updateCartQuantity(item);
-                    }else{
-                        customerDao.addCart(item);
-                    }
-                }
-                //把购物车cookie删除
-                Cookie cookie = new Cookie("cart", null);
-                cookie.setPath("/");
-                cookie.setMaxAge(-0);
-                response.addCookie(cookie);
-                resultData.setMessage("购物车添加成功");
-            }
-        }catch(CommonException c){
-            c.printStackTrace();
-            throw new CommonException(c.getCode(), c.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new CommonException();
-        }
-        return resultData;
-    }
-
-    @Override
-    public String toCart(HttpServletRequest request, Model model) throws IOException {
-
-        HttpSession session = request.getSession();
-        String username = (String)session.getAttribute("username");
-
-        //如果用户没有登录从cookie获取购物车商品列表
-        if(username == null || username.equals("")){
-            ObjectMapper objectMapper = new ObjectMapper();
-            //如果对象中有Null值的就忽略，不转为Json
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-            Cart cart = null;
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies != null && cookies.length > 0){
-                cart = getCartFromCookie(cookies, objectMapper);
-            }
-
-            if(cart != null){
-                for(CartItem item : cart.getItems()){
-                    //遍历cookie，根据商品的SkuId查找商品详情并写入购物车
-                    CartItem cartItem = customerDao.selectItemBySkuId(item);
-                    item.setProductName(cartItem.getProductName());
-                    item.setProductPicture(cartItem.getProductPicture());
-                    item.setSkuCode(cartItem.getSkuCode());
-                    item.setSkuPrice(cartItem.getSkuPrice());
-                    item.setSpec1(cartItem.getSpec1());
-                    item.setSpec2(cartItem.getSpec2());
-                    item.setSpec3(cartItem.getSpec3());
-                }
-
-                model.addAttribute("cart", cart);
-                model.addAttribute("totalPrice", cart.getTotalPrice());
-                model.addAttribute("hasItem", "true");
-            }else {
-                model.addAttribute("hasItem", "false");
-            }
-
-        //如果用户登录就从数据库购物车表获取商品列表
-        }else{
-            Integer customerId = customerDao.selectCustomerIdByUsername(username);
-            //根据用户ID查找购物车表的商品列表
-            List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
-            Cart cart = new Cart();
-            cart.setItems(cartItems);
-            model.addAttribute("cart", cart);
-            model.addAttribute("totalPrice", cart.getTotalPrice());
-            model.addAttribute("hasItem", "true");
-        }
-
-        return "online_shop/client/cart";
-    }
-
-    @Override
-    public ResultData updateQuantity(HttpServletRequest request,
-                               HttpServletResponse response,
-                               CartItem cartItem) throws IOException{
-        ResultData resultData = new ResultData();
-        HttpSession session = request.getSession();
-        String username = (String)session.getAttribute("username");
-        //如果没有登录就将购物车商品数量更新至cookie
-        if(username == null || username.equals("")){
-            ObjectMapper objectMapper = new ObjectMapper();
-            //如果对象中有Null值的就忽略，不转为Json
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-            Cart cart = null;
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies != null && cookies.length > 0){
-                cart = getCartFromCookie(cookies, objectMapper);
-            }
-            //查找出要更新数量的SKU商品的库存
-            Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
-            if(cart != null){
-                for(CartItem item : cart.getItems()){
-                    //一旦商品数量大于库存就提示没有库存了
-                    if(item.getSkuId().equals(cartItem.getSkuId()) && cartItem.getQuantity() <= skuStock){
-                        item.setQuantity(cartItem.getQuantity());
-                    }else{
-                        resultData.setCode(1);
-                        resultData.setMessage("没有更多库存了");
-                    }
+    public Map getCartItemsDetails(List<CartItem> cartItems) {
+        List<CartItem> itemList = customerDao.selectItemBySkuId(cartItems);
+        float subTotalAmount = 0;
+        for (CartItem item : itemList) {
+            for (CartItem cartItem : cartItems) {
+                if (item.getSkuId().equals(cartItem.getSkuId())) {
+                    item.setQuantity(cartItem.getQuantity());
+                    item.setItemTotalPrice(cartItem.getQuantity() * item.getSkuPrice());
+                    subTotalAmount = subTotalAmount + item.getItemTotalPrice();
                 }
             }
-            //把对象转换为JSON字符串方便cookie存储
-            String cartStr = objectMapper.writeValueAsString(cart);
-            //存储cookie时如果没有对JSON字符串进行编码会出现严重错误：非法字符[34]
-            Cookie cartCookie = new Cookie("cart", URLEncoder.encode(cartStr, "utf8"));
-            cartCookie.setMaxAge(24*60*60*30);
-            cartCookie.setPath("/");
-            response.addCookie(cartCookie);
-
-        //如果用户登录了就将购物车商品数量更新至用户的数据库购物车表
-        }else{
-            //先根据username查找用户ID
-            Integer customerId = customerDao.selectCustomerIdByUsername(username);
-            cartItem.setCustomerId(customerId);
-            //根据用户ID和SkuID查找到这个用户在数据库里的购物车表里要增加数量的商品
-            CartItem dbItem = customerDao.checkCartItemBySkuId(cartItem);
-            //该SKU的库存
-            Integer skuStock = customerDao.selectItemBySkuId(cartItem).getSkuStock();
-            //要更新的数量
-            Integer quantity = cartItem.getQuantity();
-            //一旦商品数量大于库存就提示没有库存了
-            if(dbItem.getSkuId().equals(cartItem.getSkuId()) && quantity <= skuStock){
-                dbItem.setQuantity(quantity);
-                customerDao.updateCartQuantity(dbItem);
-            }else{
-                resultData.setCode(1);
-                resultData.setMessage("没有更多库存了");
-            }
         }
-        return resultData;
+        Map<String, Object> data = new HashMap<>();
+        data.put("cartItems", itemList);
+        data.put("subTotalAmount", subTotalAmount);
+        return data;
     }
 
     @Override
-    public String checkOut(HttpServletRequest request, Model model){
-        HttpSession session = request.getSession();
-        String username = (String)session.getAttribute("username");
-        //如果用户已经登录就从数据库购物车表获取商品
-        if(username != null && !username.equals(" ")){
-            Integer customerId = customerDao.selectCustomerIdByUsername(username);
-            //根据用户ID获得该用户的购物车商品列表
-            List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
-            Cart cart = new Cart();
-            cart.setItems(cartItems);
-
-            model.addAttribute("cartItems", cart);
-            model.addAttribute("totalPrice", cart.getTotalPrice());
-        }else{
-            //用户没有登录就让用户登录
-            return "online_shop/client/online_shop_login";
-        }
-        return "online_shop/client/checkout";
-    }
-
-    @Override
-    @Transactional
-    public String generateOrder(HttpServletRequest request, HttpServletResponse response,
-                                Order orderParam, RedirectAttributes attributes){
-        ResultData resultData = new ResultData();
-        Order order = new Order();
-
-        HttpSession session = request.getSession();
-        Integer customerId = customerDao.selectCustomerIdByUsername((String)session.getAttribute("username"));
-        List<CartItem> cartItems = customerDao.selectCartByCustomerId(customerId);
-
-//        for(CartItem item : cartItems){
-//            CartItem cartItem = customerDao.selectItemBySkuId(item);
-//            if(cartItem.getSkuStock() <= 0){
-//                resultData.setCode(404);
-//                resultData.setMessage("库存不足无法下单");
-//                return resultData;
-//            }
-//        }
-
-        try{
-            order.setCustomerId(customerId);
-            order.setTotalAmount(orderParam.getTotalAmount());
-            order.setPayType(orderParam.getPayType());
-            order.setStatus(0);
-            order.setConfirmStatus(0);
-            order.setOrderCode(generateOrderSn(order, customerId));
-            customerDao.generateOrder(order);
-
-            for(CartItem item : cartItems){
-                OrderItem orderItem = new OrderItem();
-                orderItem.setCustomerId(customerId);
-                orderItem.setOrderCode(order.getOrderCode());
-                orderItem.setOrderId(order.getId());
-                orderItem.setProductId(item.getProductId());
-                orderItem.setProductCode(item.getProductCode());
-                orderItem.setProductPrice(item.getProductPrice());
-                orderItem.setProductName(item.getProductName());
-                orderItem.setPicture(item.getProductPicture());
-                orderItem.setSkuId(item.getSkuId());
-                orderItem.setSkuCode(item.getSkuCode());
-                orderItem.setSkuPrice(item.getSkuPrice());
-                orderItem.setSpec1(item.getSpec1());
-                orderItem.setSpec2(item.getSpec2());
-                orderItem.setSpec3(item.getSpec3());
-                orderItem.setQuantity(item.getQuantity());
-                orderItem.setProductAttribute(item.getProductAttribute());
-                customerDao.insertOrderItem(orderItem);
-                //减库存
-                CartItem cartItem = customerDao.selectItemBySkuId(item);
-                cartItem.setSkuStock(cartItem.getSkuStock()-item.getQuantity());
-                customerDao.updateSkuStock(cartItem);
-            }
-            //删除购物车
-            customerDao.deleteCartByCustomerId(customerId);
-
-        }catch(CommonException c){
-            c.printStackTrace();
-            throw new CommonException(c.getCode(), c.getMessage());
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new CommonException();
-        }
-
-        try{
-            if(orderParam.getPayType() == 1){
-                //带参数重定向
-                attributes.addFlashAttribute(order);
-                return "redirect:/baabaa/alipay";
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Cart getCartFromCookie(Cookie[] cookies, ObjectMapper objectMapper)throws IOException{
-        Cart cart = null;
-        for(Cookie cookie : cookies){
-            //解码
-            String name = URLDecoder.decode(cookie.getName(), "utf8");
-            String value = URLDecoder.decode(cookie.getValue(), "utf8");
-            //如果cookie的名称为cart就将Json转换为对象并赋给cart
-            if(name.equals("cart")){
-                cart = objectMapper.readValue(value, Cart.class);
-                break;
+    @Transactional(rollbackFor=Exception.class)
+    public Result pay(OrderParam orderParam) {
+        //第一步：查库存
+        List<CartItem> cartItems = customerDao.selectItemBySkuId(orderParam.getCartItems());
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getSkuStock() <= 0) {
+                return Result.failed("很抱歉，这件商品已经售罄：" + cartItem.getProductName() + "（" + cartItem.getSpec1() + " / " + cartItem.getSpec2() + "）");
             }
         }
-        return cart;
-    }
-
-    private static String md5Password(String password) {
+        //第二步：创建订单
+        String orderCode = Utils.generateOrderSn(orderParam);
+        orderParam.setOrderCode(orderCode);
+        orderParam.setStatus(0);
+        orderParam.setConfirmStatus(0);
+        customerDao.addOrder(orderParam);
+        customerDao.insertOrderItem(orderParam);
+        //减库存
+        customerDao.updateSkuStock(orderParam.getCartItems());
+        //第三步：支付
+        String result = "";
         try {
-            // 得到一个信息摘要器
-            MessageDigest digest = MessageDigest.getInstance("md5");
-            byte[] result = digest.digest(password.getBytes());
-            StringBuffer buffer = new StringBuffer();
-            // 把每一个byte 做一个与运算 0xff;
-            for (byte b : result) {
-                // 与运算
-                int number = b & 0xff;// 加盐
-                String str = Integer.toHexString(number);
-                if (str.length() == 1) {
-                    buffer.append("0");
-                }
-                buffer.append(str);
+            if (orderParam.getPayType() == 1) { // 1 代表支付宝
+                //前端在页面显示这个支付宝返回的form表单，并跳转到支付页面
+                result = customerService.aliPay(orderParam);
             }
-            // 标准的md5加密后的结果
-            return buffer.toString();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return "";
+            return Result.failed(e.getMessage());
+        }
+        return Result.success(result);
+    }
+
+    @Override
+    @Transactional(rollbackFor=Exception.class)
+    public Result updateOrder(OrderParam param) {
+        try {
+            customerDao.updateOrder(param);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failed(e.getMessage());
         }
     }
 
-    /**
-     * 生成18位订单编号:8位日期+2位支付方式+3位随机数+用户id
-     */
-    private String generateOrderSn(Order order, Integer customerId) {
-        StringBuilder sb = new StringBuilder();
-        String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        Integer random = (int) (Math.random()*100);
-        sb.append(date);
-        sb.append(String.format("%02d",order.getPayType()));
-        if(random.toString().length() < 3){
-            sb.append(String.format("%03d",random));
-        }else{
-            sb.append(random);
-        }
-        if(customerId.toString().length() <= 5){
-            sb.append(String.format("%05d",customerId));
-        }else{
-            sb.append(customerId);
-        }
-        return sb.toString();
+    @Override
+    public String aliPay(OrderParam orderParam) throws Exception {
+        //获得初始化的AlipayClient
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id,
+                AlipayConfig.merchant_private_key, "json", AlipayConfig.charset,
+                AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
+
+        //设置请求参数
+        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        alipayRequest.setReturnUrl(AlipayConfig.return_url);
+        alipayRequest.setNotifyUrl(AlipayConfig.notify_url);
+
+        //商户订单号，商户网站订单系统中唯一订单号，必填
+        String out_trade_no = orderParam.getOrderCode();
+        //付款金额，必填
+        String total_amount = String.valueOf(orderParam.getTotalAmount());
+        //订单名称，必填
+        String subject = "BaaBaa Shop 商城订单";
+        //商品描述，可空
+        String body = " ";
+
+        //该笔订单允许的最晚付款时间，逾期将关闭交易。
+        // 取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
+        String timeout_express = "1c";
+
+        alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
+                + "\"total_amount\":\"" + total_amount + "\","
+                + "\"subject\":\"" + subject + "\","
+                + "\"body\":\"" + body + "\","
+                + "\"timeout_express\":\"" + timeout_express + "\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+
+        //返回请求
+        return alipayClient.pageExecute(alipayRequest).getBody();
     }
 }

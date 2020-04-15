@@ -2,16 +2,9 @@ package buy.baabaashop.common;
 
 import java.io.Serializable;
 
-public class PaginationRequestParam implements Serializable {
+public class PaginationRequestParam {
     private Integer page = 1;
     private Integer pageSize = 10;
-
-    private Integer start;
-    private Integer length;
-    private Integer draw;
-
-    private Integer categoryId;
-    private Integer type;
 
     private Integer from = 0;
 
@@ -31,56 +24,11 @@ public class PaginationRequestParam implements Serializable {
         this.pageSize = pageSize;
     }
 
-    public Integer getDraw() {
-        return draw;
-    }
-
-    public void setDraw(Integer draw) {
-        this.draw = draw;
-    }
-
-    public Integer getStart() {
-        return start;
-    }
-
-    public void setStart(Integer start) {
-        this.start = start;
-    }
-
-    public Integer getLength() {
-        return length;
-    }
-
-    public void setLength(Integer length) {
-        this.length = length;
-    }
-
     public void setFrom(Integer from) {
         this.from = from;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public Integer getFrom() {
-        if(start != null){
-            pageSize = length;
-            return start;
-        }
-        int from = (page * pageSize) - pageSize;
-        return from;
+        return (page * pageSize) - pageSize;
     }
 }

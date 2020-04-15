@@ -6,6 +6,10 @@ import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.dao.ProductDao;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.cms.CmsProductCategoryParam;
+import buy.baabaashop.entity.cms.ProductAttributeRequestParam;
+import buy.baabaashop.entity.cms.ProductCategoryWithChildrenItem;
+import buy.baabaashop.entity.cms.ProductParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +23,7 @@ public class ProductServiceImp implements ProductService {
     public ProductDao productDao;
 
     @Override
-    public PaginationResultData<ProductCategory> selectProductCategoryList(PaginationRequestParam param){
+    public PaginationResultData<ProductCategory> selectProductCategoryList(CmsProductCategoryParam param){
 
         Integer totalRecord = productDao.selectProductCategoryTotalRecord();
 
@@ -119,7 +123,7 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public PaginationResultData<ProductAttribute> selectProductAttribute(PaginationRequestParam param){
+    public PaginationResultData<ProductAttribute> selectProductAttribute(ProductAttributeRequestParam param){
         Integer totalRecord = productDao.selectProductAttributeTotalRecord(param);
 
         PaginationResultData<ProductAttribute> resultData = new PaginationResultData<ProductAttribute>();

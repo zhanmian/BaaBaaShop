@@ -3,7 +3,7 @@ package buy.baabaashop.controller;
 import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
-import buy.baabaashop.entity.OrderDetailResult;
+import buy.baabaashop.entity.cms.OrderDetailResult;
 import buy.baabaashop.entity.OrderResult;
 import buy.baabaashop.service.OrderService;
 import org.springframework.stereotype.Controller;

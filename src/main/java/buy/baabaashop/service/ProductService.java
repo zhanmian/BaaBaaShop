@@ -4,15 +4,18 @@ import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.cms.CmsProductCategoryParam;
+import buy.baabaashop.entity.cms.ProductAttributeRequestParam;
+import buy.baabaashop.entity.cms.ProductCategoryWithChildrenItem;
+import buy.baabaashop.entity.cms.ProductParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface ProductService {
 
     PaginationResultData<Product> getProductList(PaginationRequestParam param);
 
-    PaginationResultData<ProductCategory> selectProductCategoryList(PaginationRequestParam param);
+    PaginationResultData<ProductCategory> selectProductCategoryList(CmsProductCategoryParam param);
 
     ResultData addProductCategory(ProductCategory productCategory);
 
@@ -26,7 +29,7 @@ public interface ProductService {
 
     ResultData updateProductAttributeCategory(ProductAttribute productAttribute);
 
-    PaginationResultData<ProductAttribute> selectProductAttribute(PaginationRequestParam param);
+    PaginationResultData<ProductAttribute> selectProductAttribute(ProductAttributeRequestParam param);
 
     ResultData addProductAttribute(ProductAttribute productAttribute);
 

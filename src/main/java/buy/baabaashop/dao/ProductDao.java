@@ -2,6 +2,10 @@ package buy.baabaashop.dao;
 
 import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.entity.*;
+import buy.baabaashop.entity.cms.CmsProductCategoryParam;
+import buy.baabaashop.entity.cms.ProductAttributeRequestParam;
+import buy.baabaashop.entity.cms.ProductCategoryWithChildrenItem;
+import buy.baabaashop.entity.cms.ProductParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,15 +17,15 @@ public interface ProductDao {
     List<Product> selectProductList(PaginationRequestParam param);
     Product selectProductCode(@Param("productId") Integer productId);
     List<ProductSku> selectSkuDetails(@Param("productId") Integer productId);
-    List<ProductCategory> selectProductCategoryList(PaginationRequestParam param);
+    List<ProductCategory> selectProductCategoryList(CmsProductCategoryParam param);
     List<ProductAttribute> selectProductAttributeCategory(PaginationRequestParam param);
-    List<ProductAttribute> selectProductAttribute(PaginationRequestParam param);
+    List<ProductAttribute> selectProductAttribute(ProductAttributeRequestParam param);
     List<ProductAttribute> selectProductAttributeByCategoryId(ProductAttribute productAttribute);
     Integer selectProductTotalRecord();
     Integer selectProductCategoryTotalRecord();
     ProductCategory selectProductCategoryById(ProductCategory productCategory);
     Integer selectProductAttributeCategoryTotalRecord();
-    Integer selectProductAttributeTotalRecord(PaginationRequestParam param);
+    Integer selectProductAttributeTotalRecord(ProductAttributeRequestParam param);
     ProductAttribute selectProductAttributeById(ProductAttribute productAttribute);
     ProductAttribute selectProductAttributeCategoryById(@Param("id") Integer categoryId);
 
