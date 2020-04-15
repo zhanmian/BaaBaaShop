@@ -11,12 +11,16 @@ public class OrderResult {
     private String orderCode;
     //总价
     private float totalAmount;
+
     //订单状态：0待付款，1待发货，2已发货，3已完成，4已关闭
     private Integer status;
+
     //确认收货状态：0未确认，1已确认
     private Integer confirmStatus;
+
     //支付方式：0未支付，1支付宝，2微信支付
     private Integer payType;
+
     //订单创建时间
     private String createTime;
     private String paymentTime;
