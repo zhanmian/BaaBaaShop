@@ -213,7 +213,7 @@ public class AdminController {
         String fileName = image.getOriginalFilename();
         image.transferTo(new File(storageLocationRoot + storageLocationImage + "/" + fileName));
 
-        String filePath = storageLocationImage + "/" + fileName;
+        String filePath = storageLocationRoot + storageLocationImage + "/" + fileName;
 
         //压缩图片
         Thumbnails.of(filePath)
