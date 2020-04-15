@@ -213,6 +213,7 @@ public class AdminController {
         String fileName = image.getOriginalFilename();
         image.transferTo(new File(storageLocationRoot + storageLocationImage + "/" + fileName));
 
+        //压缩图片用于找到图片路径
         String filePath = storageLocationRoot + storageLocationImage + "/" + fileName;
 
         //压缩图片
@@ -221,8 +222,11 @@ public class AdminController {
                 .outputQuality(0.3f)
                 .toFile(filePath);
 
+        //用于存进数据库
+        String path = storageLocationImage + "/" + fileName;
+
         Map<String, Object> map = new HashMap<>();
-        map.put("filePath", filePath);
+        map.put("filePath", path);
 
         Object o = new Object();
         o.equals(map);
