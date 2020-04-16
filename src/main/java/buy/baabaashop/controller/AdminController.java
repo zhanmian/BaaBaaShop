@@ -53,7 +53,7 @@ public class AdminController {
     //添加商品
     @RequestMapping(value = "add_product")
     @ResponseBody
-    public ResultData addProduct(@RequestBody ProductParam productParam){
+    public Result addProduct(@RequestBody ProductParam productParam){
         return productService.addProduct(productParam);
     }
 
