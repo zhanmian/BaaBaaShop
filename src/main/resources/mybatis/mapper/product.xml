@@ -133,7 +133,7 @@
         spec1, spec2, spec3
         )
         values
-        <foreach collection="list" item="item" separator=",">
+        <foreach collection="skuList" item="item" separator=",">
             (
             #{productId},
             #{item.skuCode}, #{item.skuPrice}, #{item.skuStock},
