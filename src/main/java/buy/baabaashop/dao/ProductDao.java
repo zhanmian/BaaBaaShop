@@ -38,7 +38,7 @@ public interface ProductDao {
     void addProduct(ProductParam productParam);
     void updateProduct(ProductParam productParam);
     void addProductSku(@Param("productId") Integer productId, @Param("skuList") List<ProductSku> skuList);
-    void addAttributeValue(ProductAttribute productAttribute);
+    void addAttributeValue(@Param("productId") Integer productId, @Param("list") List<ProductAttribute> productAttributes);
     void updateAttributeValue(ProductAttribute productAttribute);
 
     //根据ID查找商品详情

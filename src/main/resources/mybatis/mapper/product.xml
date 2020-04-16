@@ -142,17 +142,16 @@
         </foreach>
     </insert>
 
-    <insert id="addAttributeValue" parameterType="buy.baabaashop.entity.ProductAttribute">
+    <insert id="addAttributeValue">
         insert into product_attribute_value (
-        <if test="productId!=null"> product_id, </if>
-        <if test="id!=null">attribute_id, </if>
-        <if test="value!=null">value </if>
+        product_id, attribute_id,  value
         )
-        values(
-        <if test="productId!=null"> #{productId}, </if>
-        <if test="id!=null">#{id}, </if>
-        <if test="value!=null">#{value} </if>
-        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{productId},  #{item.id},  #{item.value}
+            )
+        </foreach>
     </insert>
 
     <insert id="addProductCategory" parameterType="buy.baabaashop.entity.ProductCategory">

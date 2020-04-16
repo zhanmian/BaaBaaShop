@@ -207,10 +207,7 @@ public class ProductServiceImp implements ProductService {
 
             List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
             if(productAttributeValueList != null && productAttributeValueList.size() > 0){
-                for(ProductAttribute productAttribute : productAttributeValueList){
-                    productAttribute.setProductId(productParam.getId());
-                    productDao.addAttributeValue(productAttribute);
-                }
+               productDao.addAttributeValue(productParam.getId(), productAttributeValueList);
             }
             return Result.success(null, "添加商品成功");
 
@@ -240,9 +237,8 @@ public class ProductServiceImp implements ProductService {
 
             List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
             if(productAttributeValueList != null && productAttributeValueList.size() > 0){
-                for(ProductAttribute productAttribute : productAttributeValueList){
-                    productDao.updateAttributeValue(productAttribute);
-                }
+                productDao.deleteProductAttributeValue(productParam.getId());
+                productDao.addAttributeValue(productParam.getId(), productAttributeValueList);
             }
             return Result.success(null, "更新商品成功");
 
