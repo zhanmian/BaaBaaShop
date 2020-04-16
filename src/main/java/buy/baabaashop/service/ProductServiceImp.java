@@ -1,9 +1,6 @@
 package buy.baabaashop.service;
 
-import buy.baabaashop.common.CommonException;
-import buy.baabaashop.common.PaginationRequestParam;
-import buy.baabaashop.common.PaginationResultData;
-import buy.baabaashop.common.ResultData;
+import buy.baabaashop.common.*;
 import buy.baabaashop.dao.ProductDao;
 import buy.baabaashop.entity.*;
 import buy.baabaashop.entity.cms.CmsProductCategoryParam;
@@ -198,18 +195,14 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    @Transactional
-    public ResultData addProduct(ProductParam productParam){
-        ResultData resultData = new ResultData();
+    @Transactional(rollbackFor = Exception.class)
+    public Result addProduct(ProductParam productParam){
         try{
             productDao.addProduct(productParam);
 
-            List<ProductSku> skuStockList = productParam.getSkuStockList();
+            List<ProductSku> skuStockList = productParam.getSkuList();
             if(skuStockList != null && skuStockList.size() > 0){
-                for(ProductSku productSku : skuStockList){
-                    productSku.setProductId(productParam.getId());
-                    productDao.addProductSku(productSku);
-                }
+                productDao.addProductSku(productParam.getId(), skuStockList);
             }
 
             List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
@@ -219,17 +212,12 @@ public class ProductServiceImp implements ProductService {
                     productDao.addAttributeValue(productAttribute);
                 }
             }
-            resultData.setCode(1111);
-            resultData.setMessage("添加商品成功");
+            return Result.success(null, "添加商品成功");
 
-        }catch(CommonException c){
-            c.printStackTrace();
-            throw new CommonException(c.getCode(), c.getMessage());
         }catch(Exception e){
             e.printStackTrace();
-            throw new CommonException();
+            return Result.failed(e.getMessage());
         }
-        return resultData;
     }
 
     @Override
@@ -238,17 +226,16 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    @Transactional
-    public ResultData updateProduct(ProductParam productParam){
-        ResultData resultData = new ResultData();
+    @Transactional(rollbackFor = Exception.class)
+    public Result updateProduct(ProductParam productParam){
         try{
-            productDao.updateProduct(productParam);
-
-            List<ProductSku> skuStockList = productParam.getSkuStockList();
-            if(skuStockList != null && skuStockList.size() > 0){
-                for(ProductSku productSku : skuStockList){
-                    productDao.updateProductSku(productSku);
-                }
+            List<ProductSku> skuList = productParam.getSkuList();
+            if(skuList != null && skuList.size() > 0){
+                productDao.updateProduct(productParam);
+                productDao.deleteSku(productParam.getId());
+                productDao.addProductSku(productParam.getId(), skuList);
+            } else {
+                return Result.failed("SKU 可能为空，请检查");
             }
 
             List<ProductAttribute> productAttributeValueList = productParam.getProductAttributeValueList();
@@ -257,17 +244,12 @@ public class ProductServiceImp implements ProductService {
                     productDao.updateAttributeValue(productAttribute);
                 }
             }
-            resultData.setCode(1111);
-            resultData.setMessage("更新商品成功");
+            return Result.success(null, "更新商品成功");
 
-        }catch(CommonException c){
-            c.printStackTrace();
-            throw new CommonException(c.getCode(), c.getMessage());
         }catch(Exception e){
             e.printStackTrace();
-            throw new CommonException();
+            return Result.failed(e.getMessage());
         }
-        return resultData;
     }
 
     @Override

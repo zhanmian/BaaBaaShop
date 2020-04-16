@@ -2,6 +2,7 @@ package buy.baabaashop.controller;
 
 import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
+import buy.baabaashop.common.Result;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.entity.*;
 import buy.baabaashop.entity.cms.CmsProductCategoryParam;
@@ -66,7 +67,7 @@ public class AdminController {
     //更新商品
     @RequestMapping(value = "update_product")
     @ResponseBody
-    public ResultData updateProduct(@RequestBody ProductParam productParam){
+    public Result updateProduct(@RequestBody ProductParam productParam){
         return productService.updateProduct(productParam);
     }
 

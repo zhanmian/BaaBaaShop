@@ -2,6 +2,7 @@ package buy.baabaashop.service;
 
 import buy.baabaashop.common.PaginationRequestParam;
 import buy.baabaashop.common.PaginationResultData;
+import buy.baabaashop.common.Result;
 import buy.baabaashop.common.ResultData;
 import buy.baabaashop.entity.*;
 import buy.baabaashop.entity.cms.CmsProductCategoryParam;
@@ -37,9 +38,9 @@ public interface ProductService {
 
     ResultData updateProductAttribute(ProductAttribute productAttribute);
 
-    ResultData addProduct(ProductParam productParam);
+    Result addProduct(ProductParam productParam);
 
-    ResultData updateProduct(ProductParam productParam);
+    Result updateProduct(ProductParam productParam);
 
     ProductParam getProductDetail(Integer id);
 

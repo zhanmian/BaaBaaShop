@@ -126,25 +126,20 @@
         )
     </insert>
 
-    <insert id="addProductSku" parameterType="buy.baabaashop.entity.ProductSku">
+    <insert id="addProductSku">
         insert into sku (
-        <if test="productId!=null">product_id,</if>
-        <if test="skuCode!=null">sku_code,</if>
-        <if test="skuPrice!=null">sku_price,</if>
-        <if test="skuStock!=null">sku_stock,</if>
-        <if test="spec1!=null">spec1,</if>
-        <if test="spec2!=null">spec2,</if>
-        spec3
+        product_id,
+        sku_code, sku_price, sku_stock,
+        spec1, spec2, spec3
         )
-        values(
-        <if test="productId!=null">#{productId},</if>
-        <if test="skuCode!=null">#{skuCode},</if>
-        <if test="skuPrice!=null">#{skuPrice},</if>
-        <if test="skuStock!=null">#{skuStock},</if>
-        <if test="spec1!=null">#{spec1},</if>
-        <if test="spec2!=null">#{spec2},</if>
-        #{spec3}
-        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{productId},
+            #{item.skuCode}, #{item.skuPrice}, #{item.skuStock},
+            #{item.spec1}, #{item.spec2}, #{item.spec3}
+            )
+        </foreach>
     </insert>
 
     <insert id="addAttributeValue" parameterType="buy.baabaashop.entity.ProductAttribute">
