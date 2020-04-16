@@ -200,7 +200,7 @@ public class ProductServiceImp implements ProductService {
         try{
             productDao.addProduct(productParam);
 
-            List<ProductSku> skuStockList = productParam.getSkuList();
+            List<ProductSku> skuStockList = productParam.getSkuStockList();
             if(skuStockList != null && skuStockList.size() > 0){
                 productDao.addProductSku(productParam.getId(), skuStockList);
             }
@@ -229,7 +229,7 @@ public class ProductServiceImp implements ProductService {
     @Transactional(rollbackFor = Exception.class)
     public Result updateProduct(ProductParam productParam){
         try{
-            List<ProductSku> skuList = productParam.getSkuList();
+            List<ProductSku> skuList = productParam.getSkuStockList();
             if(skuList != null && skuList.size() > 0){
                 productDao.updateProduct(productParam);
                 productDao.deleteSku(productParam.getId());

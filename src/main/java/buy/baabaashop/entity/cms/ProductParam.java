@@ -10,7 +10,7 @@ public class ProductParam extends Product {
 
     private Integer productCategoryParentId;
 
-    private List<ProductSku> skuList;
+    private List<ProductSku> skuStockList;
 
     private List<ProductAttribute> productAttributeValueList;
 
@@ -22,12 +22,12 @@ public class ProductParam extends Product {
         this.productCategoryParentId = productCategoryParentId;
     }
 
-    public List<ProductSku> getSkuList() {
-        return skuList;
+    public List<ProductSku> getSkuStockList() {
+        return skuStockList;
     }
 
-    public void setSkuList(List<ProductSku> skuList) {
-        this.skuList = skuList;
+    public void setSkuStockList(List<ProductSku> skuStockList) {
+        this.skuStockList = skuStockList;
     }
 
     public List<ProductAttribute> getProductAttributeValueList() {
