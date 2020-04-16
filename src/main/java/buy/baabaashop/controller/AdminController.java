@@ -75,7 +75,7 @@ public class AdminController {
     @RequestMapping(value = "product_list")
     @ResponseBody
     public PaginationResultData<Product> getProductList(
-            HttpServletRequest request, PaginationRequestParam param){
+            @RequestBody PaginationRequestParam param){
         return productService.getProductList(param);
     }
 
