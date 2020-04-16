@@ -10,6 +10,7 @@
         from order_detail o
         left join customer c on c.user_id=o.user_id
         where o.delete_status not in ('1')
+        order by create_time desc
         limit #{from}, #{pageSize}
     </select>
 
