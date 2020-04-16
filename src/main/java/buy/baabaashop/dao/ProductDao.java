@@ -37,7 +37,7 @@ public interface ProductDao {
     void addProductAttribute(ProductAttribute productAttribute);
     void addProduct(ProductParam productParam);
     void updateProduct(ProductParam productParam);
-    void addProductSku(@Param("productId") Integer productId, List<ProductSku> skuList);
+    void addProductSku(@Param("productId") Integer productId, @Param("skuList") List<ProductSku> skuList);
     void addAttributeValue(ProductAttribute productAttribute);
     void updateAttributeValue(ProductAttribute productAttribute);
 
