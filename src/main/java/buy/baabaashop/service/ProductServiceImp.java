@@ -252,7 +252,7 @@ public class ProductServiceImp implements ProductService {
     public PaginationResultData<Product> getProductList(PaginationRequestParam param){
         PaginationResultData<Product> resultData = new PaginationResultData<>();
         Integer totalRecord = productDao.selectProductTotalRecord();
-        resultData.setTotalRecord(totalRecord);
+        resultData.calc(param.getPage(), param.getPageSize(), totalRecord);
         List<Product> list = productDao.selectProductList(param);
         resultData.setList(list);
         return resultData;
