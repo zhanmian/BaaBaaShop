@@ -45,11 +45,6 @@ public class AdminController {
     @Resource
     public ProductService productService;
 
-    @RequestMapping(value = "")
-    public String home(){
-        return "online_shop/index";
-    }
-
     //添加商品
     @RequestMapping(value = "add_product")
     @ResponseBody
@@ -81,7 +76,7 @@ public class AdminController {
 
     @RequestMapping(value = "get_sku_details")
     @ResponseBody
-    public Object getSkuDetails(HttpServletRequest request, ProductSku productSku){
+    public Object getSkuDetails(@RequestBody ProductSku productSku){
         Map<String, Object> map = new HashMap<>();
         map.put("draw", 0);
         map.put("data", productService.getSkuDetails(productSku.getProductId()));
