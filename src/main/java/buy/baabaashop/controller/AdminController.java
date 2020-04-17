@@ -215,7 +215,7 @@ public class AdminController {
         //压缩图片
         Thumbnails.of(filePath)
                 .scale(1f)
-                .outputQuality(0.6f)
+                .outputQuality(0.9f)
                 .toFile(filePath);
 
         //用于存进数据库
