@@ -210,13 +210,13 @@ public class AdminController {
         image.transferTo(new File(storageLocationRoot + storageLocationImage + "/" + fileName));
 
         //压缩图片用于找到图片路径
-//        String filePath = storageLocationRoot + storageLocationImage + "/" + fileName;
+        String filePath = storageLocationRoot + storageLocationImage + "/" + fileName;
 
         //压缩图片
-//        Thumbnails.of(filePath)
-//                .scale(1f)
-//                .outputQuality(0.8f)
-//                .toFile(filePath);
+        Thumbnails.of(filePath)
+                .scale(1f)
+                .outputQuality(0.6f)
+                .toFile(filePath);
 
         //用于存进数据库
         String path = storageLocationImage + "/" + fileName;
