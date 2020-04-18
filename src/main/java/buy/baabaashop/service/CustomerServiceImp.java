@@ -146,6 +146,9 @@ public class CustomerServiceImp implements CustomerService {
     @Override
     @Transactional(rollbackFor=Exception.class)
     public Result pay(OrderParam orderParam) {
+        if (orderParam.getAddress() == null) {
+            return Result.failed("地址为空");
+        }
         //第一步：查库存
         List<CartItem> cartItems = customerDao.selectItemBySkuId(orderParam.getCartItems());
         for (CartItem cartItem : cartItems) {
