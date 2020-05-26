@@ -146,7 +146,7 @@ public class CustomerServiceImp implements CustomerService {
     @Override
     @Transactional(rollbackFor=Exception.class)
     public Result pay(OrderParam orderParam) {
-        if (orderParam.getAddress() == null) {
+        if (orderParam.getAddress() == null || orderParam.getAddress().equals("")) {
             return Result.failed("地址为空");
         }
         //第一步：查库存

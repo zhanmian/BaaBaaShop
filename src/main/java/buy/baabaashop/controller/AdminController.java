@@ -13,6 +13,7 @@ import buy.baabaashop.service.ProductService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,9 @@ public class AdminController {
 
     @Resource
     public ProductService productService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     //添加商品
     @RequestMapping(value = "add_product")
@@ -249,5 +253,13 @@ public class AdminController {
         }
         fis.close();
         output.close();
+    }
+
+    @RequestMapping("/redis_test")
+    @ResponseBody
+    public void redisTest( ) {
+        stringRedisTemplate.opsForValue().set("test-string-value", "Hello Redis");
+        String value = stringRedisTemplate.opsForValue().get("test-string-value");
+        System.out.println(value);
     }
 }
